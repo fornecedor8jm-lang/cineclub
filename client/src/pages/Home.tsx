@@ -1,4 +1,4 @@
-// Cineclub / direção visual: noir ritualístico editorial. Esta tela usa destaque assimétrico, fileiras curatoriais e microinterações discretas para transformar o catálogo em um arquivo explorável.
+// Cineclub / direção visual: streaming noir ritualístico. Esta tela usa destaque assimétrico, fileiras curatoriais e microinterações discretas para levar o usuário ao próximo play.
 
 import {
   ArrowUpRight,
@@ -38,7 +38,7 @@ function PosterCard({ item, isFavorite, onOpen, onToggleFavorite }: { item: Cata
           <div className="poster-scrim" />
           <div className="poster-topline">
             <span>{item.type}</span>
-            <span>{item.year ?? "ARQUIVO"}</span>
+            <span>{item.year ?? "CINECLUB"}</span>
           </div>
           <span className="poster-open"><ArrowUpRight size={16} strokeWidth={1.6} /></span>
           <div className="poster-hover-copy">
@@ -86,16 +86,22 @@ function CatalogRow({ id, eyebrow, title, description, items, favorites, onOpen,
 
 function AccessRow({ link }: { link: AccessLink }) {
   const icon = link.kind === "youtube" ? <Youtube size={15} /> : <ExternalLink size={15} />;
+  const watchLabel = link.label
+    .replace(/^Abrir /, "Assistir ")
+    .replace(/^Temporada /, "Assistir temporada ")
+    .replace(/^Episódio /, "Assistir episódio ")
+    .replace(/^1ª temporada$/, "Assistir 1ª temporada")
+    .replace(/^2ª temporada$/, "Assistir 2ª temporada");
   return link.href ? (
     <a className="access-row" href={link.href} target="_blank" rel="noreferrer">
       <span className="access-icon">{icon}</span>
-      <span className="access-label"><strong>{link.label}</strong><small>{link.kind === "youtube" ? "Playlist do YouTube" : "Pasta ou arquivo externo"}</small></span>
+      <span className="access-label"><strong>{watchLabel}</strong><small>{link.kind === "youtube" ? "Playlist do YouTube" : "Link externo para assistir"}</small></span>
       <ArrowUpRight size={16} className="access-arrow" />
     </a>
   ) : (
     <div className="access-row is-disabled" aria-disabled="true">
       <span className="access-icon"><FileText size={15} /></span>
-      <span className="access-label"><strong>{link.label}</strong><small>{link.note ?? "Acesso ainda não disponível"}</small></span>
+      <span className="access-label"><strong>{watchLabel}</strong><small>{link.note ?? "Acesso ainda não disponível"}</small></span>
     </div>
   );
 }
@@ -118,7 +124,7 @@ function DetailsModal({ item, isFavorite, onClose, onToggleFavorite }: { item: C
           <div className="details-visual-label"><span /> ARQUIVO CINECLUB</div>
         </div>
         <div className="details-content">
-          <p className="section-kicker"><span />Dossiê selecionado</p>
+          <p className="section-kicker"><span />Escolha para assistir</p>
           <h2 id="details-title">{item.title}</h2>
           <div className="detail-meta"><span>{item.year ?? "—"}</span><span>{item.type}</span><span>{item.seasons}</span><span>{item.language}</span></div>
           <p className="details-synopsis">{item.synopsis}</p>
@@ -128,10 +134,10 @@ function DetailsModal({ item, isFavorite, onClose, onToggleFavorite }: { item: C
             <span className="detail-note"><Languages size={15} /> {item.availability}</span>
           </div>
           <div className="access-section">
-            <div className="access-heading"><div><p className="section-kicker"><span />Acessos</p><h3>Escolha onde começar</h3></div><Layers3 size={20} /></div>
+            <div className="access-heading"><div><p className="section-kicker"><span />Como assistir</p><h3>Assista agora</h3></div><Layers3 size={20} /></div>
             <div className="access-list">{item.accessLinks.map((link) => <AccessRow key={link.label} link={link} />)}</div>
           </div>
-          <p className="legal-note">O Cineclub organiza os acessos informados pelo usuário e não hospeda os arquivos externos.</p>
+          <p className="legal-note">O Cineclub reúne os links informados pelo usuário e direciona você para o serviço externo escolhido.</p>
         </div>
       </div>
     </div>
@@ -186,7 +192,7 @@ export default function Home() {
           <div className="header-tools">
             <label className="search-field">
               <Search size={17} />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar no arquivo" aria-label="Buscar no catálogo" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar títulos" aria-label="Buscar no catálogo" />
             </label>
             <button className="mobile-menu" type="button" onClick={() => setMobileOpen((open) => !open)} aria-label="Abrir menu"><Menu size={20} /></button>
             <div className="profile-mark" aria-label="Perfil local"><BookOpen size={16} /></div>
@@ -199,22 +205,22 @@ export default function Home() {
           <div className="hero-overlay" />
           <div className="hero-grain" />
           <div className="hero-content shell">
-            <p className="hero-kicker"><span /> ARQUIVO DE ENTRADA / 01</p>
+            <p className="hero-kicker"><span /> DESTAQUE / 01</p>
             <h1>{hero.title}</h1>
-            <p className="hero-intro">Algumas histórias não terminam quando a tela escurece.</p>
+            <p className="hero-intro">Sua próxima maratona começa aqui.</p>
             <p className="hero-copy">{hero.synopsis}</p>
             <div className="hero-meta"><span>{hero.year}</span><span>{hero.type}</span><span>{hero.seasons}</span><span>{hero.genres[0]}</span></div>
             <div className="hero-actions">
-              <button className="button button-primary" type="button" onClick={() => setSelectedItem(hero)}><Play size={17} fill="currentColor" /> Abrir dossiê</button>
+              <button className="button button-primary" type="button" onClick={() => setSelectedItem(hero)}><Play size={17} fill="currentColor" /> Assistir agora</button>
               <button className="button button-ghost" type="button" onClick={() => toggleFavorite(hero)}>{favorites.includes(hero.id) ? <Check size={17} /> : <Plus size={17} />}{favorites.includes(hero.id) ? "Na minha lista" : "Minha lista"}</button>
             </div>
           </div>
           <div className="hero-index">01 <span>/</span> 09</div>
-          <div className="hero-bottom-line shell"><span>CURADORIA CINECLUB</span><span>Atualizado quando uma nova pasta chega</span><ArrowUpRight size={15} /></div>
+          <div className="hero-bottom-line shell"><span>STREAMING CINECLUB</span><span>Escolha seu próximo título</span><ArrowUpRight size={15} /></div>
         </section>
 
         <section className="discovery-strip shell" aria-label="Filtros do catálogo">
-          <div className="discovery-copy"><p className="section-kicker"><span />Mapa do acervo</p><h2>Escolha um clima.</h2></div>
+          <div className="discovery-copy"><p className="section-kicker"><span />Explore o catálogo</p><h2>Encontre algo para assistir.</h2></div>
           <div className="filter-list">{filters.map((filter) => <button key={filter} className={activeFilter === filter ? "active" : ""} type="button" onClick={() => setActiveFilter(filter)}>{filter}</button>)}</div>
           <div className="discovery-status"><Filter size={15} /> {filtered.length} títulos</div>
         </section>
@@ -222,13 +228,13 @@ export default function Home() {
         <section className="catalog-area">
           {hasSearch ? (
             <div className="search-results shell">
-              <div className="row-heading-copy"><p className="section-kicker"><span />Busca no arquivo</p><h2>{normalizedQuery ? `Resultados para “${query}”` : `Títulos de ${activeFilter}`}</h2><p>{filtered.length ? "A seleção foi reduzida pela sua pista." : "Nenhum título encontrado. Tente outra palavra ou outro clima."}</p></div>
-              {filtered.length ? <div className="results-grid">{filtered.map((item) => <PosterCard key={item.id} item={item} isFavorite={favorites.includes(item.id)} onOpen={() => setSelectedItem(item)} onToggleFavorite={() => toggleFavorite(item)} />)}</div> : <div className="empty-state"><Sparkles size={22} /><span>O arquivo está silencioso por aqui.</span></div>}
+              <div className="row-heading-copy"><p className="section-kicker"><span />Busca no catálogo</p><h2>{normalizedQuery ? `Resultados para “${query}”` : `Títulos de ${activeFilter}`}</h2><p>{filtered.length ? "Escolha um título para assistir agora." : "Nenhum título encontrado. Tente outra palavra ou outro clima."}</p></div>
+              {filtered.length ? <div className="results-grid">{filtered.map((item) => <PosterCard key={item.id} item={item} isFavorite={favorites.includes(item.id)} onOpen={() => setSelectedItem(item)} onToggleFavorite={() => toggleFavorite(item)} />)}</div> : <div className="empty-state"><Sparkles size={22} /><span>Nenhum título disponível com essa busca.</span></div>}
             </div>
           ) : (
             <>
-              {favoriteItems.length > 0 && <CatalogRow id="my-list" eyebrow="Seu arquivo pessoal" title="Minha lista" description="Títulos guardados para uma próxima noite de investigação." items={favoriteItems} favorites={favorites} onOpen={setSelectedItem} onToggleFavorite={toggleFavorite} />}
-              {favoriteItems.length === 0 && <section className="empty-list shell" data-row="my-list"><div><p className="section-kicker"><span />Seu arquivo pessoal</p><h2>Uma pista para depois.</h2><p>Salve títulos com o símbolo + e eles aparecerão aqui.</p></div><BookOpen size={28} /></section>}
+              {favoriteItems.length > 0 && <CatalogRow id="my-list" eyebrow="Sua seleção" title="Minha lista" description="Títulos guardados para assistir em uma próxima sessão." items={favoriteItems} favorites={favorites} onOpen={setSelectedItem} onToggleFavorite={toggleFavorite} />}
+              {favoriteItems.length === 0 && <section className="empty-list shell" data-row="my-list"><div><p className="section-kicker"><span />Minha lista</p><h2>Salve para assistir depois.</h2><p>Adicione títulos com o símbolo + e eles aparecerão aqui.</p></div><BookOpen size={28} /></section>}
               {collections.map((collection) => {
                 const items = collection.itemIds.map((id) => getCatalogItem(id)).filter(Boolean) as CatalogItem[];
                 return <CatalogRow key={collection.id} id={collection.id} eyebrow={collection.eyebrow} title={collection.title} description={collection.description} items={items} favorites={favorites} onOpen={setSelectedItem} onToggleFavorite={toggleFavorite} />;

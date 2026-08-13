@@ -1,4 +1,4 @@
-// Cineclub / direção visual: noir ritualístico editorial. Este arquivo concentra o inventário audiovisual e mantém links externos apenas como acessos informados pelo usuário.
+// Cineclub / direção visual: streaming noir ritualístico. Este módulo concentra o catálogo e mantém links externos apenas como acessos informados pelo usuário.
 
 export type AccessLink = {
   label: string;
@@ -34,7 +34,7 @@ export const catalog: CatalogItem[] = [
     year: "2014",
     type: "Série",
     genres: ["Sobrenatural", "Terror", "Ação"],
-    tags: ["Caçadores", "Demônios", "Arquivo principal"],
+    tags: ["Caçadores", "Demônios", "Destaque"],
     synopsis:
       "Acompanhe as aventuras de John Constantine, um caçador de demônios que trava uma batalha contra as forças das trevas, tanto dentro de si mesmo quanto no mundo exterior.",
     poster: poster("constantine_505e654a.jpg"),
@@ -257,7 +257,7 @@ export const catalog: CatalogItem[] = [
     poster: poster("witcher-nightmare_268ee5fe.jpg"),
     seasons: "1 filme · 1h23",
     language: "Não informado",
-    availability: "Arquivo de filme",
+    availability: "Filme disponível",
     accessLinks: [
       { label: "Abrir filme", kind: "drive", href: "https://drive.google.com/file/d/13aBHu8EF26OiMPYIgCo7pvfyhF3oAtOb/view?usp=drive_link" },
     ],
@@ -268,7 +268,7 @@ export const catalog: CatalogItem[] = [
     year: "1966",
     type: "Série",
     genres: ["Ficção científica", "Aventura", "Clássico"],
-    tags: ["Viagem no tempo", "Máquina", "Arquivo clássico"],
+    tags: ["Viagem no tempo", "Máquina", "Clássico"],
     synopsis:
       "Dois cientistas voltam no tempo para tentar proteger um projeto secreto e ficam presos na máquina do tempo, viajando e vivendo aventuras no passado e no futuro.",
     poster: poster("time-tunnel_0a3b2280.jpg"),
@@ -315,7 +315,7 @@ export const catalog: CatalogItem[] = [
     year: "1978",
     type: "Série",
     genres: ["Ação", "Aventura", "Clássico"],
-    tags: ["Toei", "Herói", "Arquivo clássico"],
+    tags: ["Toei", "Herói", "Clássico"],
     synopsis:
       "Série live-action japonesa produzida pela Toei, inspirada no personagem dos quadrinhos e exibida entre 1978 e 1979, com 41 episódios.",
     poster: poster("spider-man_faf5c4c3.jpg"),
@@ -380,7 +380,7 @@ export const catalog: CatalogItem[] = [
     poster: poster("scary-movie_2f25860f.jpg"),
     seasons: "1h36 · filme",
     language: "Dublado / Full HD",
-    availability: "Arquivo de filme",
+    availability: "Filme disponível",
     accessLinks: [
       { label: "Abrir filme", kind: "drive", href: "https://drive.google.com/file/d/1Xm0ikQCCjqEBRnbXHau5ermfsysmI2zi/view" },
     ],
@@ -412,30 +412,30 @@ export const catalog: CatalogItem[] = [
 export const collections = [
   {
     id: "doors",
-    eyebrow: "Arquivo sobrenatural",
-    title: "Portas que não deveriam abrir",
-    description: "Caçadores, sonhos e outras histórias que continuam depois que a tela escurece.",
+    eyebrow: "Seleção sobrenatural",
+    title: "Para assistir no escuro",
+    description: "Caçadores, sonhos e outras histórias para começar agora.",
     itemIds: ["constantine", "supernatural-anime", "sandman", "penny-dreadful", "witcher-nightmare"],
   },
   {
     id: "terror",
-    eyebrow: "Dossiês de terror",
+    eyebrow: "Noites de terror",
     title: "O medo muda de forma",
     description: "Antologias, laboratórios e rituais para quem gosta de deixar a luz acesa.",
     itemIds: ["se-desejos-matassem", "50-states-of-fright", "into-the-dark", "helix", "ratched"],
   },
   {
     id: "long-night",
-    eyebrow: "Maratonas longas",
+    eyebrow: "Para maratonar",
     title: "Para atravessar a madrugada",
-    description: "Universos extensos, temporadas para descobrir e mais de uma pasta esperando por você.",
+    description: "Universos extensos e temporadas esperando pelo próximo play.",
     itemIds: ["the-boys", "handmaids-tale", "chicago-fire", "tapas-e-beijos", "alphas"],
   },
   {
     id: "archive",
-    eyebrow: "Acervo curioso",
+    eyebrow: "Mais histórias",
     title: "Histórias fora do radar",
-    description: "Clássicos, comédias e arquivos encontrados no caminho.",
+    description: "Clássicos, comédias e descobertas para assistir sem pressa.",
     itemIds: ["time-tunnel", "spider-man", "vincenzo", "elle-legalmente-loira", "scary-movie"],
   },
 ];

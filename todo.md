@@ -15,6 +15,8 @@
 
 ## Implementação e validação
 
+- [ ] Remover linguagem de “dossiê”, “arquivo” e investigação da interface de streaming.
+- [ ] Trocar CTAs para “Assistir agora”, “Ver temporada” e “Continuar assistindo”.
 - [ ] Construir a home de streaming com destaque, fileiras, filtros e busca.
 - [ ] Criar detalhes de cada série e acesso por temporada.
 - [ ] Testar responsividade, acessibilidade, navegação e links do catálogo.

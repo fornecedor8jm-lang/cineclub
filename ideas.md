@@ -10,7 +10,7 @@ Uma estética de videolocadora de bairro depois da meia-noite: vermelho queimado
 
 ### Noir Ritualístico Editorial
 
-Uma plataforma de streaming com atmosfera de investigação sobrenatural: preto azulado, marfim, vinho profundo, tipografia editorial e recortes assimétricos que lembram páginas de um dossiê. A sensação deve ser sofisticada, silenciosa e cinematográfica.
+Uma plataforma de streaming com atmosfera sobrenatural: preto azulado, marfim, vinho profundo, tipografia editorial e recortes assimétricos de cinema. A sensação deve ser sofisticada, silenciosa e pronta para a próxima sessão.
 
 **Probabilidade:** 0,04
 
@@ -24,11 +24,11 @@ Uma interface noturna mais tecnológica, com preto carvão, vermelho elétrico e
 
 ### Design Movement
 
-O Cineclub seguirá uma mistura de **editorial noir contemporâneo**, **cinema de repertório** e **horror folk refinado**. A interface deve parecer uma central de curadoria, não um painel genérico de streaming: cada série entra como uma peça de arquivo que merece ser descoberta.
+O Cineclub seguirá uma mistura de **editorial noir contemporâneo**, **cinema de repertório** e **horror folk refinado**. A interface deve parecer um streaming de curadoria, não um painel genérico: cada série entra como uma escolha pronta para ser assistida.
 
 ### Core Principles
 
-Primeiro, a interface deve construir tensão por contraste: muito espaço escuro, pontos de luz precisos e blocos de texto que surgem como pistas. Segundo, a hierarquia deve ser editorial, com títulos fortes, metadados compactos e sinopses que tenham ritmo. Terceiro, a navegação precisa ser simples como um serviço de streaming, mas a composição visual deve escapar da grade perfeitamente simétrica. Quarto, todos os elementos interativos devem comunicar descoberta, nunca urgência comercial.
+Primeiro, a interface deve construir tensão por contraste: muito espaço escuro, pontos de luz precisos e blocos de conteúdo que convidam ao play. Segundo, a hierarquia deve ser editorial, com títulos fortes, metadados compactos e sinopses que tenham ritmo. Terceiro, a navegação precisa ser simples como um serviço de streaming, mas a composição visual deve escapar da grade perfeitamente simétrica. Quarto, todos os elementos interativos devem facilitar a escolha, sem criar obstáculos entre o usuário e o título.
 
 ### Color Philosophy
 
@@ -36,15 +36,15 @@ O fundo será um preto azulado quase mineral, escolhido para criar profundidade 
 
 ### Layout Paradigm
 
-O layout usará uma navegação superior fixa e discreta, seguida de um hero assimétrico: texto e CTA ficarão em uma coluna lateral, enquanto a imagem de destaque ocupará a maior parte da largura e desaparecerá suavemente no fundo. Abaixo, fileiras horizontais de cards terão títulos alinhados à esquerda e pequenas etiquetas curatoriais. Algumas seções começarão com um marcador vertical ou uma legenda lateral, criando o efeito de um arquivo organizado por pistas em vez de uma grade centralizada comum.
+O layout usará uma navegação superior fixa e discreta, seguida de um hero assimétrico: texto e CTA ficarão em uma coluna lateral, enquanto a imagem de destaque ocupará a maior parte da largura e desaparecerá suavemente no fundo. Abaixo, fileiras horizontais de cards terão títulos alinhados à esquerda e pequenas etiquetas curatoriais. Algumas seções começarão com um marcador vertical ou uma legenda lateral, criando ritmo editorial sem afastar a pessoa do botão de assistir.
 
 ### Signature Elements
 
-O primeiro motivo será o **marcador de arquivo**, uma pequena barra vertical vinho acompanhada por uma palavra de curadoria em caixa alta. O segundo será a **linha de evidência**, uma regra fina e irregular que separa blocos sem parecer uma borda de componente. O terceiro será o **selo de acesso**, usado nas temporadas, com um pequeno símbolo de chave e o texto “Abrir pasta”, reforçando que o botão leva a uma pasta externa fornecida pelo usuário.
+O primeiro motivo será o **marcador de sessão**, uma pequena barra vertical vinho acompanhada por uma palavra de curadoria em caixa alta. O segundo será a **linha cinematográfica**, uma regra fina que separa blocos sem parecer uma borda de componente. O terceiro será o **selo de acesso**, usado nas temporadas, com um pequeno símbolo de play e o texto “Assistir agora”, reforçando a função principal do streaming.
 
 ### Interaction Philosophy
 
-Interações devem parecer uma aproximação cuidadosa de uma pista. No hover, o card sobe poucos pixels, a imagem ganha contraste e uma tarja vinho aparece com o título; nada deve saltar de maneira agressiva. Foco de teclado será sempre visível como um contorno marfim. A busca deve abrir com rapidez e revelar resultados enquanto a pessoa digita. A lista pessoal será local e transparente: o usuário adiciona e remove títulos sem que a interface finja uma conta, avaliações ou recomendações algorítmicas reais.
+Interações devem tornar a escolha rápida e confortável. No hover, o card sobe poucos pixels, a imagem ganha contraste e uma tarja vinho aparece com o título; nada deve saltar de maneira agressiva. Foco de teclado será sempre visível como um contorno marfim. A busca deve abrir com rapidez e revelar resultados enquanto a pessoa digita. A lista pessoal será local e transparente: o usuário adiciona e remove títulos sem que a interface finja uma conta, avaliações ou recomendações algorítmicas reais.
 
 ### Animation
 
@@ -56,15 +56,15 @@ Os títulos de destaque usarão **DM Serif Display**, com presença de cartaz ed
 
 ### Brand Essence
 
-**Posicionamento:** Cineclub é uma curadoria de séries sobrenaturais, de terror e fantasia para quem prefere descobrir histórias estranhas com calma, contexto e uma atmosfera de cinema. **Personalidade:** misterioso, criterioso, acolhedor.
+**Posicionamento:** Cineclub é um streaming de séries sobrenaturais, terror, fantasia e outras histórias para quem quer encontrar algo marcante e assistir sem perder tempo. **Personalidade:** misterioso, criterioso, acolhedor.
 
 ### Brand Voice
 
-As manchetes devem soar como convites para atravessar uma porta, sem exagero publicitário. CTAs serão diretos e cinematográficos, e microcopy terá frases curtas, informativas e levemente sugestivas.
+As manchetes devem soar como convites para uma sessão, sem exagero publicitário. CTAs serão diretos e cinematográficos, e microcopy terá frases curtas, informativas e orientadas para assistir.
 
-> “Algumas histórias não terminam quando a tela escurece.”
+> “Sua próxima maratona começa aqui.”
 
-> “Abra a pasta. Veja onde essa temporada começa.”
+> “Assista agora. Escolha sua versão.”
 
 ### Wordmark & Logo
 
