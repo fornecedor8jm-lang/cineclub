@@ -20,6 +20,9 @@
 
 ## Implementação e validação
 
+- [x] Refazer a direção visual com fundo azul-petróleo profundo, contraste e textura de streaming.
+- [x] Reforçar hero, cards, fileiras, cabeçalho e botões Assistir agora.
+- [x] Validar desktop e mobile antes de entregar o novo visual.
 - [x] Criar a seção “Sobre o Cine Club” com a história do projeto e seus três pilares.
 - [x] Adicionar atalho de navegação e validar a leitura no mobile.
 - [ ] Adicionar Homem-Aranha: Um Novo Dia, Moana, Obsessão, Avatar: Fogo e Cinzas, Ghostland, Eternos, Até o Último Homem, Tudo em Todo o Lugar ao Mesmo Tempo, Velhos Bandidos, Gabriel e As Ovelhas Detetives.
