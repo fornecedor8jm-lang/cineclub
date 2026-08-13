@@ -20,6 +20,8 @@
 
 ## Implementação e validação
 
+- [x] Incluir A Última Casa (2026) na coleção “Escolha seu próximo filme”.
+- [ ] Validar a fileira e atualizar o GitHub público.
 - [x] Adicionar A Última Casa (2026) com pôster, sinopse, metadados e player autorizado.
 - [x] Validar o player no detalhe do filme e atualizar o GitHub público.
 - [ ] Remover A Última Casa (2026) do catálogo e de qualquer referência de Embed Play.
