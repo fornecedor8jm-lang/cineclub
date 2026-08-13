@@ -15,6 +15,7 @@ import {
   Play,
   Plus,
   Search,
+  Share2,
   Sparkles,
   X,
   Youtube,
@@ -123,12 +124,45 @@ function AccessRow({ link }: { link: AccessLink }) {
 }
 
 function DetailsModal({ item, isFavorite, onClose, onToggleFavorite }: { item: CatalogItem; isFavorite: boolean; onClose: () => void; onToggleFavorite: () => void }) {
+  const [shareStatus, setShareStatus] = useState<"idle" | "copied">("idle");
+
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
     document.addEventListener("keydown", handleKey);
     document.body.classList.add("modal-open");
     return () => { document.removeEventListener("keydown", handleKey); document.body.classList.remove("modal-open"); };
   }, [onClose]);
+
+  const shareItem = async () => {
+    const shareUrl = `${window.location.origin}/?titulo=${encodeURIComponent(item.id)}`;
+    const shareData = { title: `${item.title} | Cineclub`, text: `Assista ${item.title} no Cineclub.`, url: shareUrl };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const helper = document.createElement("textarea");
+        helper.value = shareUrl;
+        helper.setAttribute("readonly", "true");
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        const copied = document.execCommand("copy");
+        helper.remove();
+        if (!copied) throw new Error("Não foi possível copiar o link");
+      }
+
+      setShareStatus("copied");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+    }
+  };
 
   return (
     <div className="modal-layer" role="dialog" aria-modal="true" aria-labelledby="details-title" onMouseDown={(event) => { if (event.currentTarget === event.target) onClose(); }}>
@@ -147,6 +181,7 @@ function DetailsModal({ item, isFavorite, onClose, onToggleFavorite }: { item: C
           <div className="tag-list">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           <div className="detail-actions">
             <button className={`button ${isFavorite ? "button-secondary saved" : "button-secondary"}`} type="button" onClick={onToggleFavorite}>{isFavorite ? <Check size={17} /> : <Plus size={17} />}{isFavorite ? "Na minha lista" : "Minha lista"}</button>
+            {item.type === "Filme" && <button className="button button-secondary share-button" type="button" onClick={shareItem}><Share2 size={17} /> {shareStatus === "copied" ? "Link copiado" : "Compartilhar"}</button>}
             <span className="detail-note"><Languages size={15} /> {item.availability}</span>
           </div>
           {item.watchUrl && <div className="watch-section"><div className="access-heading"><div><p className="section-kicker"><span />Player autorizado</p><h3>Assista agora</h3></div><Layers3 size={20} /></div><a className="button button-primary watch-button" href={item.watchUrl} target="_blank" rel="noopener noreferrer"><Play size={17} fill="currentColor" /> Assistir agora <ArrowUpRight size={16} /></a><p className="watch-caption">{item.watchLabel ?? "Você será redirecionado ao player externo."}</p></div>}
@@ -173,6 +208,12 @@ export default function Home() {
   });
 
   useEffect(() => { localStorage.setItem("cineclub-list", JSON.stringify(favorites)); }, [favorites]);
+  useEffect(() => {
+    const sharedId = new URLSearchParams(window.location.search).get("titulo");
+    if (!sharedId) return;
+    const sharedItem = getCatalogItem(sharedId);
+    if (sharedItem) setSelectedItem(sharedItem);
+  }, []);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
     window.addEventListener("scroll", onScroll, { passive: true });
