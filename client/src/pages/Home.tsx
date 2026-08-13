@@ -149,10 +149,11 @@ function DetailsModal({ item, isFavorite, onClose, onToggleFavorite }: { item: C
             <button className={`button ${isFavorite ? "button-secondary saved" : "button-secondary"}`} type="button" onClick={onToggleFavorite}>{isFavorite ? <Check size={17} /> : <Plus size={17} />}{isFavorite ? "Na minha lista" : "Minha lista"}</button>
             <span className="detail-note"><Languages size={15} /> {item.availability}</span>
           </div>
-          <div className="access-section">
+          {item.embedUrl && <div className="embed-section"><div className="access-heading"><div><p className="section-kicker"><span />Player autorizado</p><h3>Assista agora</h3></div><Layers3 size={20} /></div><div className="embed-frame"><iframe src={item.embedUrl} title={`Player autorizado de ${item.title}`} loading="lazy" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="no-referrer" /></div><p className="embed-caption">{item.embedLabel ?? "Player externo autorizado"}</p></div>}
+          {item.accessLinks.length > 0 && <div className="access-section">
             <div className="access-heading"><div><p className="section-kicker"><span />Como assistir</p><h3>Assista agora</h3></div><Layers3 size={20} /></div>
             <div className="access-list">{item.accessLinks.map((link) => <AccessRow key={link.label} link={link} />)}</div>
-          </div>
+          </div>}
           <p className="legal-note">O Cineclub reúne os links informados pelo usuário e direciona você para o serviço externo escolhido.</p>
         </div>
       </div>

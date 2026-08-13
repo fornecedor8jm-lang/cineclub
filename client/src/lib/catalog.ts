@@ -23,6 +23,8 @@ export type CatalogItem = {
   imdbVotes?: string;
   imdbUrl?: string;
   rating?: string;
+  embedUrl?: string;
+  embedLabel?: string;
   trailerUrl?: string;
   trailerLabel?: string;
   availability?: string;
@@ -496,6 +498,23 @@ export const catalog: CatalogItem[] = [
     ],
   },
   {
+    id: "a-ultima-casa-2026",
+    title: "A Última Casa",
+    year: "2026",
+    type: "Filme",
+    genres: ["Ficção científica", "Suspense", "Terror"],
+    tags: ["Família", "Sobrevivência", "Mistério"],
+    synopsis:
+      "Forças inexplicáveis prendem uma família de quatro pessoas em sua casa por tempo indeterminado. À medida que os luxos modernos e os itens essenciais começam a se esgotar, a família precisa aprender a ser engenhosa para sobreviver e ser mais esperta do que quem — ou o quê — os está mantendo presos.",
+    poster: poster("a-ultima-casa-2026_a1265f36.jpg"),
+    seasons: "1h50 · filme",
+    language: "Não informado",
+    availability: "Player autorizado",
+    embedUrl: "https://embedplayapiupn.upns.xyz/#xpcail",
+    embedLabel: "EmbedPlay autorizado",
+    accessLinks: [],
+  },
+  {
     id: "devoradores-estrelas",
     title: "Devoradores de Estrelas",
     year: "2026",
@@ -765,7 +784,7 @@ export const collections = [
     eyebrow: "Filmes",
     title: "Escolha seu próximo filme",
     description: "Histórias reais, jornadas lendárias e comédias para assistir agora.",
-    itemIds: ["scary-movie", "professor-madman", "imitation-game", "odyssey", "devoradores-estrelas", "descendentes-wicked-wonderland", "spider-man-brand-new-day", "moana-live-action", "obsessao", "avatar-fire-ash", "ghostland", "eternos", "hacksaw-ridge", "everything-everywhere", "velhos-bandidos", "gabriel-vinganca", "sheep-detectives"],
+    itemIds: ["scary-movie", "professor-madman", "imitation-game", "odyssey", "a-ultima-casa-2026", "devoradores-estrelas", "descendentes-wicked-wonderland", "spider-man-brand-new-day", "moana-live-action", "obsessao", "avatar-fire-ash", "ghostland", "eternos", "hacksaw-ridge", "everything-everywhere", "velhos-bandidos", "gabriel-vinganca", "sheep-detectives"],
   },
 ];
 

@@ -20,6 +20,10 @@
 
 ## Implementação e validação
 
+- [x] Adicionar A Última Casa (2026) com pôster, sinopse, metadados e player autorizado.
+- [x] Validar o player no detalhe do filme e atualizar o GitHub público.
+- [ ] Remover A Última Casa (2026) do catálogo e de qualquer referência de Embed Play.
+- [ ] Validar a remoção no build e atualizar o GitHub público.
 - [x] Restaurar server/index.ts para TypeScript válido em inglês.
 - [x] Criar vercel.json com build e fallback de SPA.
 - [x] Validar pnpm check, build e preview do frontend.
