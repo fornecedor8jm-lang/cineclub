@@ -23,10 +23,26 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { catalog, collections, type AccessLink, type CatalogItem, getCatalogItem } from "@/lib/catalog";
 
 const markUrl = "/manus-storage/cineclub-mark_87e117a8.png";
-const fallbackHero = "/manus-storage/cineclub-hero_437f5ca1.jpg";
+function ratingStars(rating?: number) {
+  const filled = Math.max(0, Math.min(5, Math.round((rating ?? 0) / 2)));
+  return `${"★".repeat(filled)}${"☆".repeat(5 - filled)}`;
+}
 
-function formatStorageKey(items: CatalogItem[]) {
-  return items.map((item) => item.id);
+function TopFiveCard({ item, rank, isActive, onOpen, onSelect }: { item: CatalogItem; rank: number; isActive: boolean; onOpen: () => void; onSelect: () => void }) {
+  return (
+    <article className={`top-five-card ${isActive ? "is-active" : ""}`}>
+      <button type="button" className="top-five-poster" onClick={onSelect} aria-label={`Selecionar Top ${rank}: ${item.title}`}>
+        <span className="top-five-rank">Top {rank}</span>
+        <img src={item.poster} alt={`Pôster de ${item.title}`} loading="lazy" />
+        <span className="top-five-play"><Play size={15} fill="currentColor" /></span>
+      </button>
+      <div className="top-five-copy">
+        <div className="top-five-title"><h3>{item.title}</h3><span>{item.year}</span></div>
+        <div className="top-five-rating"><span className="stars" aria-label={`${item.imdbRating} de 10 no IMDb`}>{ratingStars(item.imdbRating)}</span><strong>{item.imdbRating?.toFixed(1).replace(".", ",")}/10</strong><small>IMDb</small></div>
+        <button type="button" className="top-five-details" onClick={onOpen}>Ver detalhes <ArrowUpRight size={13} /></button>
+      </div>
+    </article>
+  );
 }
 
 function PosterCard({ item, isFavorite, onOpen, onToggleFavorite }: { item: CatalogItem; isFavorite: boolean; onOpen: () => void; onToggleFavorite: () => void }) {
@@ -121,7 +137,7 @@ function DetailsModal({ item, isFavorite, onClose, onToggleFavorite }: { item: C
         <div className="details-visual">
           <img src={item.poster} alt={`Pôster de ${item.title}`} />
           <div className="details-visual-overlay" />
-          <div className="details-visual-label"><span /> ARQUIVO CINECLUB</div>
+          <div className="details-visual-label"><span /> CINECLUB STREAMING</div>
         </div>
         <div className="details-content">
           <p className="section-kicker"><span />Escolha para assistir</p>
@@ -150,6 +166,7 @@ export default function Home() {
   const [selectedItem, setSelectedItem] = useState<CatalogItem | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [topIndex, setTopIndex] = useState(0);
   const [favorites, setFavorites] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("cineclub-list") ?? "[]") as string[]; } catch { return []; }
   });
@@ -172,7 +189,16 @@ export default function Home() {
   }), [activeFilter, normalizedQuery]);
 
   const favoriteItems = favorites.map((id) => getCatalogItem(id)).filter(Boolean) as CatalogItem[];
-  const hero = catalog.find((item) => item.featured) ?? catalog[0];
+  const topFive = useMemo(() => catalog
+    .filter((item) => item.type === "Série" && typeof item.imdbRating === "number")
+    .sort((a, b) => (b.imdbRating ?? 0) - (a.imdbRating ?? 0) || (Number(b.imdbVotes?.replace(/\D/g, "")) || 0) - (Number(a.imdbVotes?.replace(/\D/g, "")) || 0))
+    .slice(0, 5), []);
+  const hero = topFive[topIndex] ?? topFive[0] ?? catalog[0];
+  useEffect(() => {
+    if (topFive.length < 2) return;
+    const timer = window.setInterval(() => setTopIndex((current) => (current + 1) % topFive.length), 8500);
+    return () => window.clearInterval(timer);
+  }, [topFive.length]);
   const hasSearch = Boolean(normalizedQuery || activeFilter !== "Tudo");
 
   return (
@@ -202,22 +228,30 @@ export default function Home() {
       </header>
 
       <main>
-        <section className="hero-section" style={{ backgroundImage: `url(${hero.hero ?? fallbackHero})` }}>
+        <section className="hero-section" style={{ backgroundImage: `url(${hero.poster})` }}>
           <div className="hero-overlay" />
           <div className="hero-grain" />
           <div className="hero-content shell">
-            <p className="hero-kicker"><span /> DESTAQUE / 01</p>
+            <p className="hero-kicker"><span /> TOP {topIndex + 1} / RECOMENDADOS PELO IMDb</p>
             <h1>{hero.title}</h1>
-            <p className="hero-intro">Sua próxima maratona começa aqui.</p>
+            <p className="hero-intro">Uma das séries mais bem avaliadas do catálogo.</p>
             <p className="hero-copy">{hero.synopsis}</p>
-            <div className="hero-meta"><span>{hero.year}</span><span>{hero.type}</span><span>{hero.seasons}</span><span>{hero.genres[0]}</span></div>
+            <div className="hero-meta"><span>{hero.year}</span><span>{hero.type}</span><span>{hero.seasons}</span><span>{hero.genres[0]}</span><span className="hero-imdb"><strong>{ratingStars(hero.imdbRating)}</strong> {hero.imdbRating?.toFixed(1).replace(".", ",")}/10 IMDb</span></div>
             <div className="hero-actions">
               <button className="button button-primary" type="button" onClick={() => setSelectedItem(hero)}><Play size={17} fill="currentColor" /> Assistir agora</button>
               <button className="button button-ghost" type="button" onClick={() => toggleFavorite(hero)}>{favorites.includes(hero.id) ? <Check size={17} /> : <Plus size={17} />}{favorites.includes(hero.id) ? "Na minha lista" : "Minha lista"}</button>
             </div>
           </div>
-          <div className="hero-index">01 <span>/</span> 09</div>
+          <div className="hero-index">TOP {topIndex + 1} <span>/</span> 05</div>
           <div className="hero-bottom-line shell"><span>STREAMING CINECLUB</span><span>Escolha seu próximo título</span><ArrowUpRight size={15} /></div>
+        </section>
+
+        <section className="top-five-section shell" data-row="top-five" aria-labelledby="top-five-title">
+          <div className="top-five-heading">
+            <div><p className="section-kicker"><span />Ranking do catálogo</p><h2 id="top-five-title">Top 5 recomendados pelo IMDb</h2><p>Somente séries disponíveis no Cineclub, ordenadas pela nota exibida no IMDb.</p></div>
+            <span className="top-five-updated">Notas conferidas em 13 ago. 2026</span>
+          </div>
+          <div className="top-five-grid">{topFive.map((item, index) => <TopFiveCard key={item.id} item={item} rank={index + 1} isActive={index === topIndex} onSelect={() => setTopIndex(index)} onOpen={() => setSelectedItem(item)} />)}</div>
         </section>
 
         <section className="discovery-strip shell" aria-label="Filtros do catálogo">
@@ -245,7 +279,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="site-footer shell"><div className="footer-brand"><img src={markUrl} alt="" /><span>cine<em>club</em></span></div><p>Uma curadoria independente para histórias que deixam marcas.</p><span className="footer-stamp">ARQUIVO 2026</span></footer>
+      <footer className="site-footer shell"><div className="footer-brand"><img src={markUrl} alt="" /><span>cine<em>club</em></span></div><p>Uma curadoria independente para histórias que deixam marcas.</p><span className="footer-stamp">STREAMING 2026</span></footer>
       {selectedItem && <DetailsModal item={selectedItem} isFavorite={favorites.includes(selectedItem.id)} onClose={() => setSelectedItem(null)} onToggleFavorite={() => toggleFavorite(selectedItem)} />}
     </div>
   );

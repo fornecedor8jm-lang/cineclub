@@ -19,6 +19,9 @@ export type CatalogItem = {
   hero?: string;
   seasons?: string;
   language?: string;
+  imdbRating?: number;
+  imdbVotes?: string;
+  imdbUrl?: string;
   rating?: string;
   availability?: string;
   featured?: boolean;
@@ -135,6 +138,9 @@ export const catalog: CatalogItem[] = [
     poster: poster("penny-dreadful_9b35e5ec.jpg"),
     seasons: "3 temporadas",
     language: "Não informado",
+    imdbRating: 8.2,
+    imdbVotes: "140 mil",
+    imdbUrl: "https://www.imdb.com/title/tt2628232/",
     availability: "Pastas por temporada",
     accessLinks: [
       { label: "Temporada 1", kind: "drive", href: "https://drive.google.com/drive/folders/1hLYxAu5bz3kJjSr9ZUO8QnwLAh0yDqTz?usp=drive_link" },
@@ -154,6 +160,9 @@ export const catalog: CatalogItem[] = [
     poster: poster("handmaids-tale_e97259f8.jpg"),
     seasons: "5 temporadas",
     language: "Dublado",
+    imdbRating: 8.3,
+    imdbVotes: "303 mil",
+    imdbUrl: "https://www.imdb.com/title/tt5834204/",
     availability: "Pasta dublada",
     accessLinks: [
       { label: "Abrir temporadas", kind: "drive", href: "https://drive.google.com/drive/folders/1_scMY_gg0lnH89CznyVFrq_eUmQSmVcO" },
@@ -187,6 +196,9 @@ export const catalog: CatalogItem[] = [
     poster: poster("the-boys_2cd5b6af.jpg"),
     seasons: "5 temporadas",
     language: "Não informado",
+    imdbRating: 8.5,
+    imdbVotes: "1 mi",
+    imdbUrl: "https://www.imdb.com/title/tt1190634/",
     availability: "Pastas por temporada",
     accessLinks: [
       { label: "Temporada 1", kind: "drive", href: "https://drive.google.com/drive/folders/10srwgb-q2GnIHTAm4nzt6hw5G-lJvsTm" },
@@ -207,6 +219,9 @@ export const catalog: CatalogItem[] = [
     poster: poster("vincenzo_a3905ba1.jpg"),
     seasons: "1 temporada",
     language: "Dublado",
+    imdbRating: 8.4,
+    imdbVotes: "42 mil",
+    imdbUrl: "https://www.imdb.com/title/tt13433812/",
     availability: "Pasta dublada",
     accessLinks: [
       { label: "Abrir temporada", kind: "drive", href: "https://drive.google.com/drive/folders/1Kt5NPNGtTleBA7EAtK47a2FZJLFEIM4U" },
@@ -258,6 +273,9 @@ export const catalog: CatalogItem[] = [
     poster: poster("supernatural_c1d4f0e7.jpg"),
     seasons: "15 temporadas",
     language: "Português Brasileiro",
+    imdbRating: 8.4,
+    imdbVotes: "545 mil",
+    imdbUrl: "https://www.imdb.com/title/tt0460681/",
     rating: "16",
     availability: "Todas as temporadas e episódios",
     accessLinks: [

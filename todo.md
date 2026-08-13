@@ -20,11 +20,11 @@
 
 ## Implementação e validação
 
-- [ ] Selecionar automaticamente somente séries do catálogo e ordenar as cinco maiores notas do IMDb.
-- [ ] Exibir Top 1 a Top 5 com estrelas, nota IMDb e pôster ou trailer da própria série.
-- [ ] Remover Constantine como destaque fixo e garantir que ele só apareça se estiver no ranking.
-- [ ] Corrigir e validar o pôster de A Odisseia em todos os cards do filme.
-- [ ] Pesquisar e conferir as notas do IMDb dos cinco títulos selecionados.
+- [x] Selecionar automaticamente somente séries do catálogo e ordenar as cinco maiores notas do IMDb.
+- [x] Exibir Top 1 a Top 5 com estrelas, nota IMDb e pôster ou trailer da própria série.
+- [x] Remover Constantine como destaque fixo e garantir que ele só apareça se estiver no ranking.
+- [x] Corrigir e validar o pôster de A Odisseia em todos os cards do filme.
+- [x] Pesquisar e conferir as notas do IMDb dos cinco títulos selecionados.
 - [x] Adicionar Devoradores de Estrelas (2026) e Descendentes: País das Maravilhas Malvado (2026) com pôsteres, links e metadados.
 - [ ] Trocar o hero fixo de Constantine por um destaque Top 5 com pôster ou trailer e estrelas.
 - [ ] Corrigir o pôster de A Odisseia na seção de filmes.
