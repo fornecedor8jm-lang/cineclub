@@ -110,6 +110,8 @@ Os links de Google Drive serão tratados como acessos externos por temporada. O 
 | Ratched | 2020 | Terror, drama psicológico | 1 temporada, episódios 1–8 | Links individuais informados |
 | Todo Mundo em Pânico | 2026 | Comédia, terror | Filme, 1h36 | Dublado; link de arquivo informado |
 | Chicago Fire: Heróis Contra o Fogo | 2012 | Drama, ação | 6 temporadas informadas | Links de temporada informados |
+| Devoradores de Estrelas | 2026 | Ficção científica, aventura | Filme · 2h36 | Pôster pesquisado; link externo informado |
+| Descendentes: País das Maravilhas Malvado | 2026 | Fantasia | Filme · 1h35 | Legendado; nota IMDb informada de 5,6/10 |
 
 O status de **Supernatural Anime** deve aparecer como duas opções na página de detalhes: “Versão dublada”, com a playlist do YouTube, e “Versão legendada”, com a pasta do Google Drive. Nenhum título deve receber notas, avaliações ou depoimentos inventados.
 

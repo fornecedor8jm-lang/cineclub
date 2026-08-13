@@ -470,6 +470,40 @@ export const catalog: CatalogItem[] = [
     ],
   },
   {
+    id: "devoradores-estrelas",
+    title: "Devoradores de Estrelas",
+    year: "2026",
+    type: "Filme",
+    genres: ["Ficção científica", "Aventura"],
+    tags: ["Espaço", "Memória", "Sobrevivência"],
+    synopsis:
+      "O professor de ciências Ryland Grace acorda em uma nave espacial sem nenhuma lembrança de quem é ou como chegou lá. Conforme a memória retorna, ele descobre que precisa resolver o enigma de uma substância misteriosa que está fazendo o sol se apagar.",
+    poster: poster("devoradores-estrelas_0e6923e3.jpg"),
+    seasons: "2h36 · filme",
+    language: "Não informado",
+    availability: "Filme disponível",
+    accessLinks: [
+      { label: "Assistir filme", kind: "drive", href: "https://drive.google.com/file/d/1Imf9yg0fYlFBWNWwzqx4C68Y3HzjMfzP/view?usp=drivesdk" },
+    ],
+  },
+  {
+    id: "descendentes-wicked-wonderland",
+    title: "Descendentes: País das Maravilhas Malvado",
+    year: "2026",
+    type: "Filme",
+    genres: ["Fantasia"],
+    tags: ["País das Maravilhas", "Aventura", "Família"],
+    synopsis:
+      "Um vilão aprisiona a Rainha de Copas, então Red e Chloe precisam formar uma equipe de aliados improváveis para salvá-la e proteger todo o País das Maravilhas.",
+    poster: poster("descendentes-wicked-wonderland_6760b8f8.jpg"),
+    seasons: "1h35 · filme",
+    language: "Legendado",
+    availability: "Filme disponível",
+    accessLinks: [
+      { label: "Assistir filme", kind: "drive", href: "https://drive.google.com/file/d/1NLae5G0t5rGRW4aqjNIt7jeg-tD-YMD1/view?usp=drivesdk" },
+    ],
+  },
+  {
     id: "chicago-fire",
     title: "Chicago Fire: Heróis Contra o Fogo",
     year: "2012",
@@ -527,7 +561,7 @@ export const collections = [
     eyebrow: "Filmes",
     title: "Escolha seu próximo filme",
     description: "Histórias reais, jornadas lendárias e comédias para assistir agora.",
-    itemIds: ["scary-movie", "professor-madman", "imitation-game", "odyssey"],
+    itemIds: ["scary-movie", "professor-madman", "imitation-game", "odyssey", "devoradores-estrelas", "descendentes-wicked-wonderland"],
   },
 ];
 
