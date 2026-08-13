@@ -20,6 +20,13 @@
 
 ## Implementação e validação
 
+- [x] Restaurar server/index.ts para TypeScript válido em inglês.
+- [x] Criar vercel.json com build e fallback de SPA.
+- [x] Validar pnpm check, build e preview do frontend.
+- [ ] Atualizar o repositório público do GitHub após a correção.
+- [ ] Restaurar server/index.ts para TypeScript válido em inglês.
+- [ ] Rodar check/build e confirmar que o servidor compila.
+- [ ] Enviar a correção para o repositório público do GitHub.
 - [ ] Verificar o conteúdo atual do repositório fornecedor8jm-lang/Ee antes do envio.
 - [ ] Criar um novo repositório público para o Cineclub.
 - [ ] Exportar o código e os arquivos necessários do Cineclub para o novo repositório público.
