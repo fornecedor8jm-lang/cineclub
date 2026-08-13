@@ -291,7 +291,7 @@ export default function Home() {
           </div>
           <div className="about-pillars" aria-label="Pilares do projeto">
             <article><span>01</span><h3>Cine Club</h3><p>A área audiovisual que cresceu e ganhou seu próprio espaço.</p></article>
-            <article><span>02</span><h3>Eduardo Uruguaiano e Frasão</h3><p>Responsáveis pela criação e pelo desenvolvimento do projeto.</p></article>
+            <article><span>02</span><h3>Eduardo Uruguaiano Frasão</h3><p>Responsável pela criação e pelo desenvolvimento do projeto.</p></article>
             <article><span>03</span><h3>Cristiane Spadafora</h3><p>Associada à disponibilidade dos conteúdos que movimentam o catálogo.</p></article>
           </div>
         </section>
