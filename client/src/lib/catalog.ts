@@ -32,7 +32,7 @@ export type CatalogItem = {
   accessLinks: AccessLink[];
 };
 
-const storage = "/manus-storage/";
+const storage = "/posters/";
 const poster = (name: string) => `${storage}${name}`;
 
 export const catalog: CatalogItem[] = [

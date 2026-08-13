@@ -23,7 +23,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { catalog, collections, type AccessLink, type CatalogItem, getCatalogItem } from "@/lib/catalog";
 
-const markUrl = "/manus-storage/cineclub-mark_87e117a8.png";
+const markUrl = "/posters/cineclub-mark_87e117a8.png";
 function ratingStars(rating?: number) {
   const filled = Math.max(0, Math.min(5, Math.round((rating ?? 0) / 2)));
   return `${"★".repeat(filled)}${"☆".repeat(5 - filled)}`;
