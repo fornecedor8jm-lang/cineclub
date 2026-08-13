@@ -8,6 +8,11 @@
 
 ## Catálogo e ativos
 
+- [x] Adicionar O Gênio e o Louco (2019), O Jogo da Imitação (2015) e A Odisseia (2026) como filmes.
+- [x] Inserir os links externos e destacar idioma/gênero de cada filme.
+- [x] Criar uma fileira “Filmes” separada das séries no catálogo.
+- [ ] Adicionar a série Supernatural separada do Supernatural Anime, com 15 temporadas, classificação 16 e idioma brasileiro.
+- [ ] Inserir os 15 links de temporada de Supernatural na página de detalhes.
 - [ ] Organizar as séries e temporadas enviadas pelo usuário.
 - [ ] Pesquisar pôsteres públicos e adequados para uso como referência visual no catálogo.
 - [ ] Validar títulos, gêneros, sinopses, temporadas e links externos.

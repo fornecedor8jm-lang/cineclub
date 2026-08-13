@@ -3,7 +3,7 @@
 export type AccessLink = {
   label: string;
   href?: string;
-  kind?: "drive" | "youtube";
+  kind?: "drive" | "youtube" | "photos";
   note?: string;
 };
 
@@ -19,6 +19,7 @@ export type CatalogItem = {
   hero?: string;
   seasons?: string;
   language?: string;
+  rating?: string;
   availability?: string;
   featured?: boolean;
   accessLinks: AccessLink[];
@@ -246,6 +247,38 @@ export const catalog: CatalogItem[] = [
     ],
   },
   {
+    id: "supernatural",
+    title: "Supernatural",
+    year: "2005",
+    type: "Série",
+    genres: ["Drama", "Terror", "Sobrenatural"],
+    tags: ["Irmãos Winchester", "Caçadores", "15 temporadas"],
+    synopsis:
+      "Sam e Dean Winchester dedicam suas vidas a caçar criaturas sobrenaturais, incluindo demônios, fantasmas e monstros de lendas urbanas, enquanto atravessam uma jornada de família, lealdade e sacrifício.",
+    poster: poster("supernatural_c1d4f0e7.jpg"),
+    seasons: "15 temporadas",
+    language: "Português Brasileiro",
+    rating: "16",
+    availability: "Todas as temporadas e episódios",
+    accessLinks: [
+      { label: "1ª temporada", kind: "photos", href: "https://photos.app.goo.gl/2vGytkk5hVmmvFPZ9" },
+      { label: "2ª temporada", kind: "photos", href: "https://photos.app.goo.gl/2C9yJuAbSWv1dexR7" },
+      { label: "3ª temporada", kind: "photos", href: "https://photos.app.goo.gl/WZsuNzVUaY6EtzRLA" },
+      { label: "4ª temporada", kind: "photos", href: "https://photos.app.goo.gl/YxCmXwU1JJGNK82H8" },
+      { label: "5ª temporada", kind: "photos", href: "https://photos.app.goo.gl/BmQRYsD2ZQQzz2NY9" },
+      { label: "6ª temporada", kind: "photos", href: "https://photos.app.goo.gl/CBk6FSJeRrrFPbjGA" },
+      { label: "7ª temporada", kind: "photos", href: "https://photos.app.goo.gl/GXsVe8GbCJTPFKRN7" },
+      { label: "8ª temporada", kind: "photos", href: "https://photos.app.goo.gl/XhY8afzR3fmEaKPz8" },
+      { label: "9ª temporada", kind: "photos", href: "https://photos.app.goo.gl/Wh3ubVqXEuWB69Jf6" },
+      { label: "10ª temporada", kind: "photos", href: "https://photos.app.goo.gl/VquD3MSSpK99VTdv7" },
+      { label: "11ª temporada", kind: "photos", href: "https://photos.app.goo.gl/zaKHfNNeJJRWeoBU7" },
+      { label: "12ª temporada", kind: "photos", href: "https://photos.app.goo.gl/hzgLqJwiwq5iVKZd6" },
+      { label: "13ª temporada", kind: "photos", href: "https://photos.app.goo.gl/odGMBHfK8aDcS6C5A" },
+      { label: "14ª temporada", kind: "photos", href: "https://photos.app.goo.gl/6RgbEwkLyjK5QcMa6" },
+      { label: "15ª temporada", kind: "photos", href: "https://photos.app.goo.gl/GLeaeaoadd2ewrXD8" },
+    ],
+  },
+  {
     id: "witcher-nightmare",
     title: "The Witcher: Nightmare of the Wolf",
     year: "2021",
@@ -386,6 +419,57 @@ export const catalog: CatalogItem[] = [
     ],
   },
   {
+    id: "professor-madman",
+    title: "O Gênio e o Louco",
+    year: "2019",
+    type: "Filme",
+    genres: ["Drama", "História", "Biografia"],
+    tags: ["Oxford", "Palavras", "Século XIX"],
+    synopsis:
+      "A vida do professor James Murray é retratada a partir do momento em que ele começa a trabalhar na compilação de palavras para a primeira edição do Dicionário de Inglês de Oxford, em meados do século XIX.",
+    poster: poster("professor-madman_ee6efec0.jpg"),
+    seasons: "Filme",
+    language: "Não informado",
+    availability: "Filme disponível",
+    accessLinks: [
+      { label: "Assistir filme", kind: "drive", href: "https://drive.google.com/file/d/1-DlY_OB0MCDCCSH1_yi6saGZ4xf2pzXH/view" },
+    ],
+  },
+  {
+    id: "imitation-game",
+    title: "O Jogo da Imitação",
+    year: "2015",
+    type: "Filme",
+    genres: ["Drama", "História", "Biografia"],
+    tags: ["Alan Turing", "Enigma", "Segunda Guerra"],
+    synopsis:
+      "Em 1939, Alan Turing é recrutado pela inteligência britânica para ajudar a decifrar códigos nazistas, enquanto constrói uma máquina capaz de enfrentar o Enigma e muda o curso da guerra.",
+    poster: poster("imitation-game_d5b8a0e4.jpg"),
+    seasons: "Filme",
+    language: "Não informado",
+    availability: "Filme disponível",
+    accessLinks: [
+      { label: "Assistir filme", kind: "drive", href: "https://drive.google.com/file/d/1hcfme9SrSp6-jGqS5q4ClblnZB2yVBnb/view?usp=drivesdk" },
+    ],
+  },
+  {
+    id: "odyssey",
+    title: "A Odisseia",
+    year: "2026",
+    type: "Filme",
+    genres: ["Ação", "Fantasia", "Aventura"],
+    tags: ["Mitologia", "Deuses", "Jornada"],
+    synopsis:
+      "O rei grego Odisseu tenta voltar para casa em Ítaca após a Guerra de Troia. Enfrentando deuses furiosos e criaturas míticas, sua jornada se estende enquanto Penélope resiste aos pretendentes do trono.",
+    poster: poster("odyssey_52071e3c.jpg"),
+    seasons: "Filme · HDCAM",
+    language: "Dublado / Legendado",
+    availability: "GoFile · acesso direto",
+    accessLinks: [
+      { label: "Assistir filme", kind: "drive", href: "https://gofile.io/d/OxZH55" },
+    ],
+  },
+  {
     id: "chicago-fire",
     title: "Chicago Fire: Heróis Contra o Fogo",
     year: "2012",
@@ -415,7 +499,7 @@ export const collections = [
     eyebrow: "Seleção sobrenatural",
     title: "Para assistir no escuro",
     description: "Caçadores, sonhos e outras histórias para começar agora.",
-    itemIds: ["constantine", "supernatural-anime", "sandman", "penny-dreadful", "witcher-nightmare"],
+    itemIds: ["constantine", "supernatural", "supernatural-anime", "sandman", "penny-dreadful", "witcher-nightmare"],
   },
   {
     id: "terror",
@@ -437,6 +521,13 @@ export const collections = [
     title: "Histórias fora do radar",
     description: "Clássicos, comédias e descobertas para assistir sem pressa.",
     itemIds: ["time-tunnel", "spider-man", "vincenzo", "elle-legalmente-loira", "scary-movie"],
+  },
+  {
+    id: "films",
+    eyebrow: "Filmes",
+    title: "Escolha seu próximo filme",
+    description: "Histórias reais, jornadas lendárias e comédias para assistir agora.",
+    itemIds: ["scary-movie", "professor-madman", "imitation-game", "odyssey"],
   },
 ];
 

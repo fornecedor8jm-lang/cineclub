@@ -126,7 +126,7 @@ function DetailsModal({ item, isFavorite, onClose, onToggleFavorite }: { item: C
         <div className="details-content">
           <p className="section-kicker"><span />Escolha para assistir</p>
           <h2 id="details-title">{item.title}</h2>
-          <div className="detail-meta"><span>{item.year ?? "—"}</span><span>{item.type}</span><span>{item.seasons}</span><span>{item.language}</span></div>
+          <div className="detail-meta"><span>{item.year ?? "—"}</span><span>{item.rating ? `Classificação ${item.rating}` : item.type}</span><span>{item.seasons}</span><span>{item.language}</span></div>
           <p className="details-synopsis">{item.synopsis}</p>
           <div className="tag-list">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           <div className="detail-actions">
@@ -186,6 +186,7 @@ export default function Home() {
             <button className="active" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Início</button>
             <button type="button" onClick={() => scrollTo("doors")}>Séries</button>
             <button type="button" onClick={() => scrollTo("terror")}>Terror</button>
+            <button type="button" onClick={() => scrollTo("films")}>Filmes</button>
             <button type="button" onClick={() => scrollTo("archive")}>Acervo</button>
             <button type="button" onClick={() => scrollTo("my-list")}>Minha lista <span>{favorites.length || ""}</span></button>
           </nav>

@@ -101,6 +101,7 @@ Os links de Google Drive serão tratados como acessos externos por temporada. O 
 | Vincenzo | — | Drama, ação, crime | 1 temporada | Dublado; link de pasta informado |
 | Alphas | — | Ficção científica, ação | 2 temporadas | Links de temporada informados |
 | Supernatural Anime | — | Sobrenatural, anime | 1 temporada | **Dublado e legendado; dois acessos** |
+| Supernatural | 2005 | Drama, terror, sobrenatural | 15 temporadas | **16; português brasileiro; acessos por temporada** |
 | The Witcher: Nightmare of the Wolf | 2021 | Fantasia, ação, aventura | Filme anime, 1h23 | Link de arquivo informado |
 | O Túnel do Tempo | 1966 | Ficção científica, aventura | 1 temporada, episódios 1–10 | Links individuais informados |
 | Tapas & Beijos | 2011 | Comédia nacional | 5 temporadas | Links de temporada informados |
@@ -111,3 +112,5 @@ Os links de Google Drive serão tratados como acessos externos por temporada. O 
 | Chicago Fire: Heróis Contra o Fogo | 2012 | Drama, ação | 6 temporadas informadas | Links de temporada informados |
 
 O status de **Supernatural Anime** deve aparecer como duas opções na página de detalhes: “Versão dublada”, com a playlist do YouTube, e “Versão legendada”, com a pasta do Google Drive. Nenhum título deve receber notas, avaliações ou depoimentos inventados.
+
+**Supernatural** fica separado do anime e deve mostrar “Classificação 16”, “15 temporadas” e “Português Brasileiro” antes da lista de acessos. Cada temporada abre o link correspondente enviado pelo usuário.
