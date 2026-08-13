@@ -49,14 +49,14 @@ function PosterCard({ item, isFavorite, onOpen, onToggleFavorite }: { item: Cata
   return (
     <article className="poster-card">
       <button className="poster-button" type="button" onClick={onOpen} aria-label={`Abrir detalhes de ${item.title}`}>
-        <div className="poster-frame">
-          <img src={item.poster} alt={`Pôster de ${item.title}`} loading="lazy" />
-          <div className="poster-scrim" />
-          <div className="poster-topline">
-            <span>{item.type}</span>
-            <span>{item.year ?? "CINECLUB"}</span>
-          </div>
-          <span className="poster-open"><ArrowUpRight size={16} strokeWidth={1.6} /></span>
+          <div className="poster-frame">
+            <img src={item.poster} alt={`Pôster de ${item.title}`} loading="lazy" />
+            <div className="poster-scrim" />
+            <div className="poster-topline">
+              <span>{item.type}</span>
+              <span>{item.year ?? "CINECLUB"}</span>
+            </div>
+            <span className="poster-open"><ArrowUpRight size={16} strokeWidth={1.6} /></span>
           <div className="poster-hover-copy">
             <span className="mini-kicker">{item.genres[0]}</span>
             <strong>{item.title}</strong>

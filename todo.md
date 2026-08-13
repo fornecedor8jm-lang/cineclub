@@ -20,6 +20,10 @@
 
 ## Implementação e validação
 
+- [ ] Adicionar Homem-Aranha: Um Novo Dia, Moana, Obsessão, Avatar: Fogo e Cinzas, Ghostland, Eternos, Até o Último Homem, Tudo em Todo o Lugar ao Mesmo Tempo, Velhos Bandidos, Gabriel e As Ovelhas Detetives.
+- [x] Inserir pôsteres, metadados, idiomas e links dos filmes do anexo; trailers não serão exibidos.
+- [x] Remover indicadores e botões de trailer dos cards e do modal, mantendo pôster e sinopse.
+- [ ] Trocar a paleta preta por tons claros de azul-petróleo, grafite azulado, vinho e marfim.
 - [x] Selecionar automaticamente somente séries do catálogo e ordenar as cinco maiores notas do IMDb.
 - [x] Exibir Top 1 a Top 5 com estrelas, nota IMDb e pôster ou trailer da própria série.
 - [x] Remover Constantine como destaque fixo e garantir que ele só apareça se estiver no ranking.
