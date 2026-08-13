@@ -23,6 +23,7 @@
 - [x] Adicionar botão Compartilhar aos detalhes dos filmes.
 - [x] Verificar e documentar o erro externo exibido após iniciar o player.
 - [x] Validar o compartilhamento no mobile, build e sincronização no GitHub.
+- [x] Exibir aviso para recarregar a página duas vezes e confirmar que é humano antes de assistir.
 - [x] Remover o iframe bloqueado de A Última Casa.
 - [x] Adicionar botão Assistir agora com redirecionamento direto ao EmbedPlay autorizado.
 - [x] Validar mobile, build e sincronizar o GitHub público.
