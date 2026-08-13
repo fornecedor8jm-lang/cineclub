@@ -23,8 +23,8 @@ export type CatalogItem = {
   imdbVotes?: string;
   imdbUrl?: string;
   rating?: string;
-  embedUrl?: string;
-  embedLabel?: string;
+  watchUrl?: string;
+  watchLabel?: string;
   trailerUrl?: string;
   trailerLabel?: string;
   availability?: string;
@@ -510,8 +510,8 @@ export const catalog: CatalogItem[] = [
     seasons: "1h50 · filme",
     language: "Não informado",
     availability: "Player autorizado",
-    embedUrl: "https://embedplayapiupn.upns.xyz/#xpcail",
-    embedLabel: "EmbedPlay autorizado",
+    watchUrl: "https://embedplayapiupn.upns.xyz/#xpcail",
+    watchLabel: "EmbedPlay autorizado",
     accessLinks: [],
   },
   {

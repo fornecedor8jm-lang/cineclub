@@ -20,6 +20,9 @@
 
 ## Implementação e validação
 
+- [x] Remover o iframe bloqueado de A Última Casa.
+- [x] Adicionar botão Assistir agora com redirecionamento direto ao EmbedPlay autorizado.
+- [x] Validar mobile, build e sincronizar o GitHub público.
 - [x] Incluir A Última Casa (2026) na coleção “Escolha seu próximo filme”.
 - [ ] Validar a fileira e atualizar o GitHub público.
 - [x] Adicionar A Última Casa (2026) com pôster, sinopse, metadados e player autorizado.
