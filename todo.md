@@ -20,6 +20,10 @@
 
 ## Implementação e validação
 
+- [ ] Verificar o conteúdo atual do repositório fornecedor8jm-lang/Ee antes do envio.
+- [ ] Criar um novo repositório público para o Cineclub.
+- [ ] Exportar o código e os arquivos necessários do Cineclub para o novo repositório público.
+- [ ] Confirmar o branch e o commit enviados e orientar a configuração do domínio.
 - [x] Refazer a direção visual com fundo azul-petróleo profundo, contraste e textura de streaming.
 - [x] Reforçar hero, cards, fileiras, cabeçalho e botões Assistir agora.
 - [x] Validar desktop e mobile antes de entregar o novo visual.
