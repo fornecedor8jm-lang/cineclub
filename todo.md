@@ -20,8 +20,8 @@
 
 ## Implementação e validação
 
-- [ ] Corrigir as referências `/manus-storage` que aparecem quebradas na publicação da Vercel.
-- [ ] Hospedar ou referenciar os pôsteres em URLs acessíveis pela Vercel e validar o catálogo publicado.
+- [x] Corrigir as referências `/manus-storage` que aparecem quebradas na publicação da Vercel.
+- [x] Hospedar ou referenciar os pôsteres em URLs acessíveis pela Vercel e validar o catálogo publicado.
 - [x] Adicionar botão Compartilhar aos detalhes dos filmes.
 - [x] Verificar e documentar o erro externo exibido após iniciar o player.
 - [x] Validar o compartilhamento no mobile, build e sincronização no GitHub.
