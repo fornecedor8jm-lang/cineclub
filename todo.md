@@ -20,6 +20,8 @@
 
 ## Implementação e validação
 
+- [x] Criar a seção “Sobre o Cine Club” com a história do projeto e seus três pilares.
+- [x] Adicionar atalho de navegação e validar a leitura no mobile.
 - [ ] Adicionar Homem-Aranha: Um Novo Dia, Moana, Obsessão, Avatar: Fogo e Cinzas, Ghostland, Eternos, Até o Último Homem, Tudo em Todo o Lugar ao Mesmo Tempo, Velhos Bandidos, Gabriel e As Ovelhas Detetives.
 - [x] Inserir pôsteres, metadados, idiomas e links dos filmes do anexo; trailers não serão exibidos.
 - [x] Remover indicadores e botões de trailer dos cards e do modal, mantendo pôster e sinopse.

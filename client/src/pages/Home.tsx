@@ -215,6 +215,7 @@ export default function Home() {
             <button type="button" onClick={() => scrollTo("films")}>Filmes</button>
             <button type="button" onClick={() => scrollTo("archive")}>Acervo</button>
             <button type="button" onClick={() => scrollTo("my-list")}>Minha lista <span>{favorites.length || ""}</span></button>
+            <button type="button" onClick={() => scrollTo("about")}>Sobre</button>
           </nav>
           <div className="header-tools">
             <label className="search-field">
@@ -276,6 +277,23 @@ export default function Home() {
               })}
             </>
           )}
+        </section>
+
+        <section className="about-section shell" data-row="about" aria-labelledby="about-title">
+          <div className="about-intro">
+            <p className="section-kicker"><span />Nossa história</p>
+            <h2 id="about-title">O Cine Club começou em outro lugar.</h2>
+            <p className="about-lead">Antes de ser uma área própria de entretenimento, o projeto nasceu dentro do site Caçadores Winchesters.</p>
+          </div>
+          <div className="about-story">
+            <p>Anteriormente chamado de <strong>Cineclube</strong>, o projeto funcionava como uma aba ligada ao universo de Supernatural e aos conteúdos relacionados aos Winchesters. Era uma área dedicada a filmes e séries dentro de um site que tinha outro foco.</p>
+            <p>Com o tempo, o Caçadores Winchesters mudou de direção e passou a priorizar produções mais recentes. Foi nessa mudança de roteiro que o Cineclube ganhou identidade própria e passou a ser conhecido como <strong>Cine Club</strong>: um espaço para encontrar histórias, escolher o que assistir e começar a próxima sessão.</p>
+          </div>
+          <div className="about-pillars" aria-label="Pilares do projeto">
+            <article><span>01</span><h3>Cine Club</h3><p>A área audiovisual que cresceu e ganhou seu próprio espaço.</p></article>
+            <article><span>02</span><h3>Eduardo Uruguaiano e Frasão</h3><p>Responsáveis pela criação e pelo desenvolvimento do projeto.</p></article>
+            <article><span>03</span><h3>Cristiane Spadafora</h3><p>Associada à disponibilidade dos conteúdos que movimentam o catálogo.</p></article>
+          </div>
         </section>
       </main>
 
