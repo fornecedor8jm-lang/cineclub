@@ -18,8 +18,8 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [showDonation, setShowDonation] = useState(false);
-  const [showChannelInfo, setShowChannelInfo] = useState(false);
-  const [showControls, setShowControls] = useState(false);
+  const [showChannelInfo, setShowChannelInfo] = useState(true);
+  const [showControls, setShowControls] = useState(true);
   const [retryKey, setRetryKey] = useState(0);
   const channelInfoTimerRef = useRef<number | undefined>(undefined);
   const controlsTimerRef = useRef<number | undefined>(undefined);
@@ -37,8 +37,10 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
   useEffect(() => {
     window.clearTimeout(channelInfoTimerRef.current);
     window.clearTimeout(controlsTimerRef.current);
-    setShowChannelInfo(false);
-    setShowControls(false);
+    setShowChannelInfo(true);
+    setShowControls(true);
+    controlsTimerRef.current = window.setTimeout(() => setShowControls(false), 5000);
+    channelInfoTimerRef.current = window.setTimeout(() => setShowChannelInfo(false), 5000);
     return () => {
       window.clearTimeout(channelInfoTimerRef.current);
       window.clearTimeout(controlsTimerRef.current);
@@ -77,9 +79,11 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
     if (video.canPlayType("application/vnd.apple.mpegurl") && looksLikeHls) {
       video.src = channel.url;
       video.addEventListener("loadedmetadata", startPlayback, { once: true });
+      video.addEventListener("canplay", startPlayback, { once: true });
     } else if (looksLikeNativeVideo) {
       video.src = channel.url;
       video.addEventListener("loadedmetadata", startPlayback, { once: true });
+      video.addEventListener("canplay", startPlayback, { once: true });
     } else if (Hls.isSupported()) {
       hls = new Hls({
         enableWorker: true,
@@ -151,7 +155,10 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
       video.load();
       video.removeEventListener("waiting", onWaiting);
       video.removeEventListener("playing", onPlaying);
-      video.removeEventListener("error", onError);
+                video.removeEventListener("error", onError);
+          video.removeEventListener("loadedmetadata", startPlayback);
+          video.removeEventListener("canplay", startPlayback);
+
     };
   }, [channel.url, retryKey]);
 
@@ -197,8 +204,9 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
 
         <video ref={videoRef} playsInline autoPlay muted={isMuted} className="channel-video" />
         <div className="channel-player-scrim" />
-        <div className={`channel-player-topline${showControls ? " is-visible" : ""}`} aria-hidden="true">
+        <div className={`channel-player-topline${showControls ? " is-visible" : ""}`}>
           <span className="player-brand"><span className="brand-dot" /> cine<em>club</em></span>
+          <button type="button" className="player-close" onClick={onClose} aria-label="Fechar player">×</button>
         </div>
         <div className="channel-player-content">
           {isLoading && !error && <div className="player-loading"><Loader2 size={28} className="spin" /><span>{channel.contentType === "live" ? "Conectando ao canal..." : "Abrindo conteúdo Premium..."}</span></div>}
