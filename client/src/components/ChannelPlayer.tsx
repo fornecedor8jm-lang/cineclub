@@ -72,7 +72,12 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
         });
     };
 
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    const looksLikeHls = /\.m3u8(?:$|[?#])|[?&](?:type|output)=m3u/i.test(channel.url);
+    const looksLikeNativeVideo = /\.(?:mp4|webm|ogg)(?:$|[?#])/i.test(channel.url) || channel.contentType !== "live";
+    if (video.canPlayType("application/vnd.apple.mpegurl") && looksLikeHls) {
+      video.src = channel.url;
+      video.addEventListener("loadedmetadata", startPlayback, { once: true });
+    } else if (looksLikeNativeVideo) {
       video.src = channel.url;
       video.addEventListener("loadedmetadata", startPlayback, { once: true });
     } else if (Hls.isSupported()) {
@@ -196,7 +201,7 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
           <span className="player-brand"><span className="brand-dot" /> cine<em>club</em></span>
         </div>
         <div className="channel-player-content">
-          {isLoading && !error && <div className="player-loading"><Loader2 size={28} className="spin" /><span>Conectando ao canal...</span></div>}
+          {isLoading && !error && <div className="player-loading"><Loader2 size={28} className="spin" /><span>{channel.contentType === "live" ? "Conectando ao canal..." : "Abrindo conteúdo Premium..."}</span></div>}
           {error && <div className="player-error"><Radio size={27} /><strong>Transmissão indisponível</strong><span>{error}</span><div className="player-error-actions"><button type="button" className="button button-primary" onClick={() => { setError(""); setIsLoading(true); setRetryKey((value) => value + 1); }}>Tentar novamente</button><button type="button" className="button button-ghost" onClick={onClose}>Escolher outro canal</button></div></div>}
         </div>
         {showDonation && (
@@ -209,7 +214,7 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
           <div className={`player-channel-info${showChannelInfo ? "" : " is-hidden"}`} aria-hidden={!showChannelInfo} data-channel-info={showChannelInfo ? "visible" : "hidden"} style={{ display: showChannelInfo ? "flex" : "none" }} onClick={() => setShowChannelInfo(false)}>
 
             {channel.logo ? <img className="player-channel-logo" src={channel.logo} alt="" /> : <span className="player-channel-fallback"><Radio size={18} /></span>}
-            <div><span className="live-badge">AO VIVO</span><h2>{channel.name}</h2><p>{channel.group}</p></div>
+            <div><span className="live-badge">{channel.contentType === "live" ? "AO VIVO" : "Nuvem Premium"}</span><h2>{channel.name}</h2><p>{channel.group}</p></div>
           </div>
           <div className="player-actions">
             <button type="button" className="player-channel-prev" onClick={() => selectChannel(previousChannel)} disabled={!previousChannel} aria-label="Canal anterior" title="Canal anterior"><ChevronUp size={19} /></button>

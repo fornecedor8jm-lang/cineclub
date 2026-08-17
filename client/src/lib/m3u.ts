@@ -7,6 +7,8 @@ export const M3U_SOURCES = [
   { id: "br", label: "Brasil", url: "https://iptv-org.github.io/iptv/countries/br.m3u" },
 ] as const;
 
+export type M3uContentType = "live" | "movie" | "series" | "other";
+
 export type M3uChannel = {
   id: string;
   name: string;
@@ -15,8 +17,22 @@ export type M3uChannel = {
   country?: string;
   sourceCountry?: string;
   language?: string;
+  contentType?: M3uContentType;
   url: string;
 };
+
+export function classifyM3uGroup(group: string): M3uContentType {
+  const normalized = group.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
+  // Alguns provedores usam grupos híbridos como “Canais | Filmes e Series”.
+  // Quando o grupo começa com Canais, ele representa transmissão ao vivo.
+  if (/^(canais?|radio|live)\b/.test(normalized)) return "live";
+  if (/^(series?|tv shows?)\b/.test(normalized) || /temporada|episodio/.test(normalized)) return "series";
+  if (/^(filmes?|movies?|cinema)\b/.test(normalized)) return "movie";
+  if (/canais?|radio|live|esporte|noticia|aberto|infantil|variedade/.test(normalized)) return "live";
+  if (/serie|series|temporada|episodio|tv show/.test(normalized)) return "series";
+  if (/filme|filmes|movie|cinema/.test(normalized)) return "movie";
+  return "other";
+}
 
 function readAttribute(line: string, names: string[]) {
   for (const name of names) {
@@ -59,6 +75,7 @@ export function parseM3u(text: string, sourceCountry?: string): M3uChannel[] {
         country: readAttribute(line, ["tvg-country", "country"]) || undefined,
         sourceCountry,
         language: readAttribute(line, ["tvg-language", "language"]) || undefined,
+        contentType: classifyM3uGroup(readAttribute(line, ["group-title", "group", "category"]) || "Canais ao vivo"),
       };
       continue;
     }
@@ -77,6 +94,18 @@ export function parseM3u(text: string, sourceCountry?: string): M3uChannel[] {
     seen.add(channel.url);
     return true;
   });
+}
+
+export async function loadPremiumM3u() {
+  const response = await fetch("/api/premium", { headers: { Accept: "audio/x-mpegurl,text/plain,*/*" } });
+  if (!response.ok) {
+    let message = `A fonte Premium respondeu HTTP ${response.status}`;
+    try { const payload = await response.json() as { error?: string }; if (payload.error) message = payload.error; } catch { /* resposta não JSON */ }
+    throw new Error(message);
+  }
+  const channels = parseM3u(await response.text(), "Nuvem Premium");
+  if (!channels.length) throw new Error("A fonte Premium foi baixada, mas nenhum item foi encontrado.");
+  return channels;
 }
 
 export async function loadM3u(url = DEFAULT_M3U_URL, sourceCountry?: string) {
