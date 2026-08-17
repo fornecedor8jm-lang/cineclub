@@ -48,6 +48,8 @@ public class MainActivity extends Activity {
         settings.setDisplayZoomControls(false);
         settings.setLoadWithOverviewMode(false);
         settings.setUseWideViewPort(true);
+        // O APK é um wrapper do site ao vivo: sempre revalida CSS/JS para refletir atualizações.
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setUserAgentString(settings.getUserAgentString()
                 + " CineclubTV/1.0 AndroidTV DesktopMode");
 
