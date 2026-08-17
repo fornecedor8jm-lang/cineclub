@@ -125,7 +125,7 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
 
   return (
     <div className="channel-player-layer" role="dialog" aria-modal="true" aria-label={`Reprodutor de ${channel.name}`}>
-        <div ref={playerRef} className={`channel-player${isLandscape ? " is-landscape" : ""}`}>
+        <div ref={playerRef} className={`channel-player${isLandscape ? " is-landscape" : ""}`} onClick={() => setShowChannelInfo(false)}>
 
         <video ref={videoRef} playsInline autoPlay muted={isMuted} className="channel-video" />
         <div className="channel-player-scrim" />
