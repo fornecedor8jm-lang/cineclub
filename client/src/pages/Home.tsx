@@ -327,6 +327,16 @@ export default function Home() {
 
   const toggleFavorite = (item: CatalogItem) => setFavorites((current) => current.includes(item.id) ? current.filter((id) => id !== item.id) : [...current, item.id]);
   const scrollTo = (id: string) => { document.querySelector(`[data-row="${id}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" }); setMobileOpen(false); };
+  const closeChannelPlayer = () => {
+    setSelectedChannel(null);
+    setChannelsOpen(true);
+    window.setTimeout(() => {
+      const firstChannel = document.querySelector<HTMLElement>(".channels-section:not(.premium-section) .channels-grid .channel-card");
+      firstChannel?.focus({ preventScroll: true });
+      firstChannel?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+    }, 180);
+    window.setTimeout(() => scrollTo("channels"), 0);
+  };
   const filters = ["Tudo", "Sobrenatural", "Terror", "Fantasia", "Drama", "Comédia", "Anime"];
   const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
   const filtered = useMemo(() => catalog.filter((item) => {
@@ -503,7 +513,7 @@ export default function Home() {
 
       <footer className="site-footer shell"><div className="footer-brand"><img src={markUrl} alt="" /><span>cine<em>club</em></span></div><p>Uma curadoria independente para histórias que deixam marcas.</p><span className="footer-stamp">STREAMING 2026</span></footer>
       {selectedItem && <DetailsModal item={selectedItem} isFavorite={favorites.includes(selectedItem.id)} onClose={() => setSelectedItem(null)} onToggleFavorite={() => toggleFavorite(selectedItem)} />}
-      {selectedChannel && <ChannelPlayer channel={selectedChannel} channels={selectedChannel.sourceCountry === "Nuvem Premium" ? premiumVisible.slice(0, 120) : visibleChannels.slice(0, 120)} onSelectChannel={setSelectedChannel} onClose={() => setSelectedChannel(null)} />}
+      {selectedChannel && <ChannelPlayer channel={selectedChannel} channels={selectedChannel.sourceCountry === "Nuvem Premium" ? premiumVisible.slice(0, 120) : visibleChannels.slice(0, 120)} onSelectChannel={setSelectedChannel} onClose={closeChannelPlayer} />}
     </div>
   );
 }
