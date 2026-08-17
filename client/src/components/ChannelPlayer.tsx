@@ -19,9 +19,11 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [showDonation, setShowDonation] = useState(false);
-  const [showChannelInfo, setShowChannelInfo] = useState(true);
+  const [showChannelInfo, setShowChannelInfo] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
   const channelInfoTimerRef = useRef<number | undefined>(undefined);
+  const controlsTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -34,10 +36,19 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
 
   useEffect(() => {
     window.clearTimeout(channelInfoTimerRef.current);
-    setShowChannelInfo(true);
-    channelInfoTimerRef.current = window.setTimeout(() => setShowChannelInfo(false), 5000);
-    return () => window.clearTimeout(channelInfoTimerRef.current);
+    window.clearTimeout(controlsTimerRef.current);
+    setShowChannelInfo(false);
+    setShowControls(false);
+    return () => {
+      window.clearTimeout(channelInfoTimerRef.current);
+      window.clearTimeout(controlsTimerRef.current);
+    };
   }, [channel.id]);
+
+  useEffect(() => {
+    const focusTimer = window.setTimeout(() => playerRef.current?.focus({ preventScroll: true }), 0);
+    return () => window.clearTimeout(focusTimer);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -168,6 +179,15 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
     if (nextChannel && onSelectChannel) onSelectChannel(nextChannel);
   };
 
+  const revealPlayerUi = () => {
+    setShowControls(true);
+    setShowChannelInfo(true);
+    window.clearTimeout(controlsTimerRef.current);
+    window.clearTimeout(channelInfoTimerRef.current);
+    controlsTimerRef.current = window.setTimeout(() => setShowControls(false), 5000);
+    channelInfoTimerRef.current = window.setTimeout(() => setShowChannelInfo(false), 5000);
+  };
+
   const togglePlayback = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -177,11 +197,11 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
 
   return (
     <div className="channel-player-layer" role="dialog" aria-modal="true" aria-label={`Reprodutor de ${channel.name}`}>
-        <div ref={playerRef} className={`channel-player${isLandscape ? " is-landscape" : ""}`} onClick={() => setShowChannelInfo(false)}>
+        <div ref={playerRef} tabIndex={0} className={`channel-player${isLandscape ? " is-landscape" : ""}${showControls ? " is-ui-visible" : ""}`} onPointerDown={revealPlayerUi} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") revealPlayerUi(); }}>
 
         <video ref={videoRef} playsInline autoPlay muted={isMuted} className="channel-video" />
         <div className="channel-player-scrim" />
-        <div className="channel-player-topline">
+        <div className={`channel-player-topline${showControls ? " is-visible" : ""}`}>
           <span className="player-brand"><span className="brand-dot" /> cine<em>club</em></span>
           <div className="player-top-actions">
             <button type="button" className="player-rotate" onClick={toggleOrientation} aria-label={isLandscape ? "Voltar para retrato" : "Girar para paisagem"} title={isLandscape ? "Voltar para retrato" : "Girar para paisagem"}><RotateCw size={20} /></button>
@@ -198,7 +218,7 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
             <span>Doe para a gente qualquer valor. É só falar com a gente no grupo Caçadores Winchesters.</span>
           </div>
         )}
-        <div className="channel-player-controls">
+        <div className={`channel-player-controls${showControls ? " is-visible" : ""}`}>
           <div className={`player-channel-info${showChannelInfo ? "" : " is-hidden"}`} aria-hidden={!showChannelInfo} data-channel-info={showChannelInfo ? "visible" : "hidden"} style={{ display: showChannelInfo ? "flex" : "none" }} onClick={() => setShowChannelInfo(false)}>
 
             {channel.logo ? <img className="player-channel-logo" src={channel.logo} alt="" /> : <span className="player-channel-fallback"><Radio size={18} /></span>}

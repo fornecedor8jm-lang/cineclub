@@ -341,6 +341,13 @@ export default function Home() {
   }, [tvMode, channelsOpen, channelsLoading, channelsError, visibleChannels.length]);
   return (
     <div className={`cineclub-app ${tvMode ? "tv-layout" : ""}`} data-tv-mode={tvMode ? "true" : "false"}>
+      <div className="mobile-unavailable" role="status">
+        <div className="mobile-unavailable-inner">
+          <span className="player-brand"><span className="brand-dot" /> cine<em>club</em></span>
+          <h1>Experiência de tela grande</h1>
+          <p>O Cineclub está disponível para computadores e Android TV. Abra o site em uma tela maior para assistir.</p>
+        </div>
+      </div>
       <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
         <div className="header-inner shell">
           <button className="brand" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Voltar ao início do Cineclub">

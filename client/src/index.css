@@ -512,3 +512,55 @@ a { color: inherit; text-decoration: none; }
   .tv-layout .channel-logo { width: 64px; height: 64px; flex-basis: 64px; }
   .tv-layout .channels-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 }
+
+/* Player contextual: nada fica persistente até o usuário interagir. */
+.channel-player-topline,
+.channel-player-controls {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 180ms ease, visibility 0s linear 180ms;
+}
+.channel-player-topline.is-visible,
+.channel-player-controls.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+.channel-player:focus-visible {
+  outline: 3px solid var(--wine-bright);
+  outline-offset: -3px;
+}
+.mobile-unavailable {
+  display: none;
+}
+@media (max-width: 760px) {
+  .cineclub-app:not(.tv-layout) > *:not(.mobile-unavailable) {
+    display: none;
+  }
+  .cineclub-app:not(.tv-layout) .mobile-unavailable {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    color: var(--paper);
+    background: var(--ink);
+    text-align: center;
+  }
+  .mobile-unavailable-inner {
+    width: min(420px, 100%);
+    padding: 30px 24px;
+    border: 1px solid var(--line-strong);
+    background: linear-gradient(145deg, rgba(18,53,62,.96), rgba(7,21,26,.98));
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  }
+  .mobile-unavailable .brand-dot { margin-right: 8px; }
+  .mobile-unavailable h1 { margin: 16px 0 8px; color: var(--paper); font-family: "DM Serif Display", serif; font-size: 2rem; font-weight: 400; }
+  .mobile-unavailable p { margin: 0; color: var(--paper-soft); font-size: 13px; line-height: 1.6; }
+}
+@media (max-width: 760px) and (orientation: landscape) {
+  .cineclub-app:not(.tv-layout) .mobile-unavailable { padding: 18px; }
+}
