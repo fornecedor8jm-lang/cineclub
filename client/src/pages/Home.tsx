@@ -14,6 +14,8 @@ import {
   Menu,
   Play,
   Plus,
+  Radio,
+  Loader2,
   Search,
   Share2,
   Sparkles,
@@ -22,6 +24,8 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { catalog, collections, type AccessLink, type CatalogItem, getCatalogItem } from "@/lib/catalog";
+import { loadM3u, type M3uChannel } from "@/lib/m3u";
+import ChannelPlayer from "@/components/ChannelPlayer";
 
 const markUrl = "/posters/cineclub-mark_87e117a8.png";
 function ratingStars(rating?: number) {
@@ -203,11 +207,23 @@ export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [topIndex, setTopIndex] = useState(0);
+  const [channelsOpen, setChannelsOpen] = useState(false);
+  const [channels, setChannels] = useState<M3uChannel[]>([]);
+  const [channelsLoading, setChannelsLoading] = useState(false);
+  const [channelsError, setChannelsError] = useState("");
+  const [channelQuery, setChannelQuery] = useState("");
+  const [selectedChannel, setSelectedChannel] = useState<M3uChannel | null>(null);
   const [favorites, setFavorites] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("cineclub-list") ?? "[]") as string[]; } catch { return []; }
   });
 
   useEffect(() => { localStorage.setItem("cineclub-list", JSON.stringify(favorites)); }, [favorites]);
+  useEffect(() => {
+    if (!channelsOpen || channels.length || channelsLoading) return;
+    setChannelsLoading(true);
+    setChannelsError("");
+    loadM3u().then(setChannels).catch((error) => setChannelsError(error instanceof Error ? error.message : "Não foi possível carregar os canais.")).finally(() => setChannelsLoading(false));
+  }, [channelsOpen, channels.length, channelsLoading]);
   useEffect(() => {
     const sharedId = new URLSearchParams(window.location.search).get("titulo");
     if (!sharedId) return;
@@ -242,6 +258,10 @@ export default function Home() {
     return () => window.clearInterval(timer);
   }, [topFive.length]);
   const hasSearch = Boolean(normalizedQuery || activeFilter !== "Tudo");
+  const visibleChannels = useMemo(() => {
+    const query = channelQuery.trim().toLocaleLowerCase("pt-BR");
+    return channels.filter((channel) => !query || `${channel.name} ${channel.group}`.toLocaleLowerCase("pt-BR").includes(query));
+  }, [channels, channelQuery]);
 
   return (
     <div className="cineclub-app">
@@ -255,6 +275,7 @@ export default function Home() {
             <button type="button" onClick={() => scrollTo("doors")}>Séries</button>
             <button type="button" onClick={() => scrollTo("terror")}>Terror</button>
             <button type="button" onClick={() => scrollTo("films")}>Filmes</button>
+            <button type="button" className={channelsOpen ? "active" : ""} onClick={() => { setChannelsOpen(true); setTimeout(() => scrollTo("channels"), 0); }}>Canais</button>
             <button type="button" onClick={() => scrollTo("archive")}>Acervo</button>
             <button type="button" onClick={() => scrollTo("my-list")}>Minha lista <span>{favorites.length || ""}</span></button>
             <button type="button" onClick={() => scrollTo("about")}>Sobre</button>
@@ -287,6 +308,19 @@ export default function Home() {
           </div>
           <div className="hero-index">TOP {topIndex + 1} <span>/</span> 05</div>
           <div className="hero-bottom-line shell"><span>STREAMING CINECLUB</span><span>Escolha seu próximo título</span><ArrowUpRight size={15} /></div>
+        </section>
+
+        <section className={`channels-section shell ${channelsOpen ? "is-open" : ""}`} data-row="channels" aria-labelledby="channels-title">
+          <div className="channels-heading">
+            <div><p className="section-kicker"><span />Transmissão ao vivo</p><h2 id="channels-title">Canais</h2><p>Uma seleção de canais em português, carregada da Nuvem do Cineclub.</p></div>
+            <button type="button" className="button button-secondary" onClick={() => setChannelsOpen((open) => !open)}>{channelsOpen ? "Ocultar canais" : "Abrir canais"}</button>
+          </div>
+          {channelsOpen && <>
+            <div className="channels-toolbar"><label className="channel-search"><Radio size={16} /><input value={channelQuery} onChange={(event) => setChannelQuery(event.target.value)} placeholder="Buscar canal" aria-label="Buscar canal" /></label><span>{channelsLoading ? "carregando..." : `${visibleChannels.length} canais`}</span></div>
+            {channelsLoading && <div className="channels-empty"><Loader2 size={22} className="spin" /><span>Carregando a lista portuguesa...</span></div>}
+            {channelsError && <div className="channels-empty is-error"><Radio size={22} /><span>{channelsError}</span><button type="button" className="button button-primary" onClick={() => { setChannels([]); setChannelsOpen(false); setTimeout(() => setChannelsOpen(true), 0); }}>Tentar novamente</button></div>}
+            {!channelsLoading && !channelsError && <div className="channels-grid">{visibleChannels.slice(0, 120).map((channel) => <button type="button" className="channel-card" key={channel.id} onClick={() => setSelectedChannel(channel)}><span className="channel-logo">{channel.logo ? <img src={channel.logo} alt="" loading="lazy" /> : <Radio size={22} />}</span><span className="channel-card-copy"><strong>{channel.name}</strong><small>{channel.group}</small></span><span className="channel-live-dot" /></button>)}</div>}
+          </>}
         </section>
 
         <section className="top-five-section shell" data-row="top-five" aria-labelledby="top-five-title">
@@ -341,6 +375,7 @@ export default function Home() {
 
       <footer className="site-footer shell"><div className="footer-brand"><img src={markUrl} alt="" /><span>cine<em>club</em></span></div><p>Uma curadoria independente para histórias que deixam marcas.</p><span className="footer-stamp">STREAMING 2026</span></footer>
       {selectedItem && <DetailsModal item={selectedItem} isFavorite={favorites.includes(selectedItem.id)} onClose={() => setSelectedItem(null)} onToggleFavorite={() => toggleFavorite(selectedItem)} />}
+      {selectedChannel && <ChannelPlayer channel={selectedChannel} onClose={() => setSelectedChannel(null)} />}
     </div>
   );
 }
