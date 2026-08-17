@@ -16,6 +16,16 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showDonation, setShowDonation] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setShowDonation(true);
+      window.setTimeout(() => setShowDonation(false), 12000);
+    }, 10 * 60 * 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -106,9 +116,15 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
           {isLoading && !error && <div className="player-loading"><Loader2 size={28} className="spin" /><span>Conectando ao canal...</span></div>}
           {error && <div className="player-error"><Radio size={27} /><strong>Transmissão indisponível</strong><span>{error}</span><button type="button" className="button button-primary" onClick={() => window.location.reload()}>Tentar novamente</button></div>}
         </div>
+        {showDonation && (
+          <div className="player-donation" role="status" aria-live="polite">
+            <strong>Tá gostando do app gratuito?</strong>
+            <span>Doe para a gente qualquer valor. É só falar com a gente no grupo Caçadores Winchesters.</span>
+          </div>
+        )}
         <div className="channel-player-controls">
           <div className="player-channel-info">
-            {channel.logo ? <img src={channel.logo} alt="" /> : <span className="player-channel-fallback"><Radio size={18} /></span>}
+            {channel.logo ? <img className="player-channel-logo" src={channel.logo} alt="" /> : <span className="player-channel-fallback"><Radio size={18} /></span>}
             <div><span className="live-badge">AO VIVO</span><h2>{channel.name}</h2><p>{channel.group}</p></div>
           </div>
           <div className="player-actions">
