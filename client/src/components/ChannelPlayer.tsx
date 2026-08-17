@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
-import { Loader2, Pause, Play, Radio, Volume2, VolumeX, X } from "lucide-react";
+import { Loader2, Pause, Play, Radio, RotateCw, Volume2, VolumeX, X } from "lucide-react";
 import type { M3uChannel } from "@/lib/m3u";
 
 type ChannelPlayerProps = {
@@ -10,7 +10,9 @@ type ChannelPlayerProps = {
 
 export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isLandscape, setIsLandscape] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -59,6 +61,28 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
     };
   }, [channel.url]);
 
+  const toggleOrientation = async () => {
+    const nextLandscape = !isLandscape;
+    const orientation = typeof screen !== "undefined" ? screen.orientation : undefined;
+    const lockOrientation = orientation && (orientation as ScreenOrientation & { lock?: (value: "landscape" | "portrait") => Promise<void> }).lock;
+
+    try {
+      if (nextLandscape) {
+        if (!document.fullscreenElement && playerRef.current?.requestFullscreen) {
+          await playerRef.current.requestFullscreen();
+        }
+        if (lockOrientation) await lockOrientation.call(orientation, "landscape");
+      } else {
+        if (lockOrientation) await lockOrientation.call(orientation, "portrait");
+        if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
+      }
+    } catch {
+      // Alguns navegadores só permitem lock de orientação quando o site está instalado como PWA.
+    }
+
+    setIsLandscape(nextLandscape);
+  };
+
   const togglePlayback = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -68,12 +92,15 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
 
   return (
     <div className="channel-player-layer" role="dialog" aria-modal="true" aria-label={`Reprodutor de ${channel.name}`}>
-      <div className="channel-player">
+      <div ref={playerRef} className={`channel-player${isLandscape ? " is-landscape" : ""}`}>
         <video ref={videoRef} playsInline autoPlay muted={isMuted} className="channel-video" />
         <div className="channel-player-scrim" />
         <div className="channel-player-topline">
           <span className="player-brand"><span className="brand-dot" /> cine<em>club</em></span>
-          <button type="button" className="player-close" onClick={onClose} aria-label="Fechar reprodutor"><X size={22} /></button>
+          <div className="player-top-actions">
+            <button type="button" className="player-rotate" onClick={toggleOrientation} aria-label={isLandscape ? "Voltar para retrato" : "Girar para paisagem"} title={isLandscape ? "Voltar para retrato" : "Girar para paisagem"}><RotateCw size={20} /></button>
+            <button type="button" className="player-close" onClick={onClose} aria-label="Fechar reprodutor"><X size={22} /></button>
+          </div>
         </div>
         <div className="channel-player-content">
           {isLoading && !error && <div className="player-loading"><Loader2 size={28} className="spin" /><span>Conectando ao canal...</span></div>}
