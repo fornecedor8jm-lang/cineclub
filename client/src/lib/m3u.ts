@@ -1,4 +1,11 @@
-export const DEFAULT_M3U_URL = "https://iptv-org.github.io/iptv/languages/por.m3u";
+export const DEFAULT_M3U_URL = "https://iptv-org.github.io/iptv/countries/br.m3u";
+
+export const M3U_SOURCES = [
+  { id: "ao", label: "Angola", url: "https://iptv-org.github.io/iptv/countries/ao.m3u" },
+  { id: "pt", label: "Portugal", url: "https://iptv-org.github.io/iptv/countries/pt.m3u" },
+  { id: "py", label: "Paraguai", url: "https://iptv-org.github.io/iptv/countries/py.m3u" },
+  { id: "br", label: "Brasil", url: "https://iptv-org.github.io/iptv/countries/br.m3u" },
+] as const;
 
 export type M3uChannel = {
   id: string;
@@ -6,6 +13,7 @@ export type M3uChannel = {
   group: string;
   logo?: string;
   country?: string;
+  sourceCountry?: string;
   language?: string;
   url: string;
 };
@@ -32,7 +40,7 @@ function firstCommaOutsideQuotes(line: string) {
   return -1;
 }
 
-export function parseM3u(text: string): M3uChannel[] {
+export function parseM3u(text: string, sourceCountry?: string): M3uChannel[] {
   const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
   const channels: M3uChannel[] = [];
   let pending: Omit<M3uChannel, "url" | "id"> | null = null;
@@ -49,6 +57,7 @@ export function parseM3u(text: string): M3uChannel[] {
         group: readAttribute(line, ["group-title", "group", "category"]) || "Canais ao vivo",
         logo: readAttribute(line, ["tvg-logo", "logo", "logo-url"]) || undefined,
         country: readAttribute(line, ["tvg-country", "country"]) || undefined,
+        sourceCountry,
         language: readAttribute(line, ["tvg-language", "language"]) || undefined,
       };
       continue;
@@ -70,11 +79,11 @@ export function parseM3u(text: string): M3uChannel[] {
   });
 }
 
-export async function loadM3u(url = DEFAULT_M3U_URL) {
+export async function loadM3u(url = DEFAULT_M3U_URL, sourceCountry?: string) {
   const response = await fetch(url, { headers: { Accept: "audio/x-mpegurl,text/plain,*/*" } });
   if (!response.ok) throw new Error(`A lista respondeu HTTP ${response.status}`);
   const text = await response.text();
-  const channels = parseM3u(text);
+  const channels = parseM3u(text, sourceCountry);
   if (!channels.length) throw new Error("A lista foi baixada, mas nenhum canal foi encontrado.");
   return channels;
 }

@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { catalog, collections, type AccessLink, type CatalogItem, getCatalogItem } from "@/lib/catalog";
-import { loadM3u, type M3uChannel } from "@/lib/m3u";
+import { loadM3u, M3U_SOURCES, type M3uChannel } from "@/lib/m3u";
 import ChannelPlayer from "@/components/ChannelPlayer";
 
 const markUrl = "/posters/cineclub-mark_87e117a8.png";
@@ -212,6 +212,7 @@ export default function Home() {
   const [channelsLoading, setChannelsLoading] = useState(false);
   const [channelsError, setChannelsError] = useState("");
   const [channelQuery, setChannelQuery] = useState("");
+  const [activeChannelCountry, setActiveChannelCountry] = useState("br");
   const [selectedChannel, setSelectedChannel] = useState<M3uChannel | null>(null);
   const [tvMode, setTvMode] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -290,7 +291,20 @@ export default function Home() {
     if (!channelsOpen || channels.length || channelsLoading) return;
     setChannelsLoading(true);
     setChannelsError("");
-    loadM3u().then(setChannels).catch((error) => setChannelsError(error instanceof Error ? error.message : "Não foi possível carregar os canais.")).finally(() => setChannelsLoading(false));
+    Promise.allSettled(M3U_SOURCES.map((source) => loadM3u(source.url, source.label)))
+      .then((results) => {
+        const merged = results.flatMap((result) => result.status === "fulfilled" ? result.value : []);
+        const seen = new Set<string>();
+        const unique = merged.filter((channel) => {
+          if (seen.has(channel.url)) return false;
+          seen.add(channel.url);
+          return true;
+        });
+        if (!unique.length) throw new Error("Nenhuma lista de canais pôde ser carregada.");
+        setChannels(unique);
+      })
+      .catch((error) => setChannelsError(error instanceof Error ? error.message : "Não foi possível carregar os canais."))
+      .finally(() => setChannelsLoading(false));
   }, [channelsOpen, channels.length, channelsLoading]);
   useEffect(() => {
     const sharedId = new URLSearchParams(window.location.search).get("titulo");
@@ -326,10 +340,11 @@ export default function Home() {
     return () => window.clearInterval(timer);
   }, [topFive.length]);
   const hasSearch = Boolean(normalizedQuery || activeFilter !== "Tudo");
+  const countryChannels = useMemo(() => channels.filter((channel) => channel.sourceCountry === M3U_SOURCES.find((source) => source.id === activeChannelCountry)?.label), [activeChannelCountry, channels]);
   const visibleChannels = useMemo(() => {
     const query = channelQuery.trim().toLocaleLowerCase("pt-BR");
-    return channels.filter((channel) => !query || `${channel.name} ${channel.group}`.toLocaleLowerCase("pt-BR").includes(query));
-    }, [channels, channelQuery]);
+    return countryChannels.filter((channel) => !query || `${channel.name} ${channel.group}`.toLocaleLowerCase("pt-BR").includes(query));
+  }, [countryChannels, channelQuery]);
   useEffect(() => {
     if (!tvMode || !channelsOpen || channelsLoading || channelsError || !visibleChannels.length) return;
     const focusTimer = window.setTimeout(() => {
@@ -393,8 +408,9 @@ export default function Home() {
             <button type="button" className="button button-secondary" onClick={() => setChannelsOpen((open) => !open)}>{channelsOpen ? "Ocultar canais" : "Abrir canais"}</button>
           </div>
           {channelsOpen && <>
-            <div className="channels-toolbar"><label className="channel-search"><Radio size={16} /><input value={channelQuery} onChange={(event) => setChannelQuery(event.target.value)} placeholder="Buscar canal" aria-label="Buscar canal" /></label><span>{channelsLoading ? "carregando..." : `${visibleChannels.length} canais`}</span></div>
-            {channelsLoading && <div className="channels-empty"><Loader2 size={22} className="spin" /><span>Carregando a lista portuguesa...</span></div>}
+            <div className="channels-country-tabs" role="tablist" aria-label="Escolha o país dos canais">{M3U_SOURCES.map((source) => <button key={source.id} type="button" role="tab" aria-selected={activeChannelCountry === source.id} className={activeChannelCountry === source.id ? "active" : ""} onClick={() => { setActiveChannelCountry(source.id); setChannelQuery(""); }}>{source.label}</button>)}</div>
+            <div className="channels-toolbar"><label className="channel-search"><Radio size={16} /><input value={channelQuery} onChange={(event) => setChannelQuery(event.target.value)} placeholder={`Buscar canal em ${M3U_SOURCES.find((source) => source.id === activeChannelCountry)?.label ?? "Canais"}`} aria-label="Buscar canal" /></label><span>{channelsLoading ? "carregando..." : `${visibleChannels.length} canais`}</span></div>
+            {channelsLoading && <div className="channels-empty"><Loader2 size={22} className="spin" /><span>Carregando as listas de Angola, Portugal, Paraguai e Brasil...</span></div>}
             {channelsError && <div className="channels-empty is-error"><Radio size={22} /><span>{channelsError}</span><button type="button" className="button button-primary" onClick={() => { setChannels([]); setChannelsOpen(false); setTimeout(() => setChannelsOpen(true), 0); }}>Tentar novamente</button></div>}
             {!channelsLoading && !channelsError && <div className="channels-grid">{visibleChannels.slice(0, 120).map((channel) => <button type="button" className="channel-card" key={channel.id} onClick={() => setSelectedChannel(channel)}><span className="channel-logo">{channel.logo ? <img src={channel.logo} alt="" loading="lazy" /> : <Radio size={22} />}</span><span className="channel-card-copy"><strong>{channel.name}</strong><small>{channel.group}</small></span><span className="channel-live-dot" /></button>)}</div>}
           </>}
