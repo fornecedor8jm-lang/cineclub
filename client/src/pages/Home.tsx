@@ -34,8 +34,8 @@ function ratingStars(rating?: number) {
 }
 
 function isTvConfirmKey(event: KeyboardEvent) {
-  return ["Enter", "NumpadEnter", " ", "Space", "Select", "OK", "DPAD_CENTER"].includes(event.key)
-    || [13, 23, 66].includes(event.keyCode);
+  // Enter/Space já são ativados nativamente pelos <button>; aqui tratamos os códigos específicos de controles TV.
+  return ["Select", "OK", "DPAD_CENTER"].includes(event.key) || event.keyCode === 23;
 }
 
 function TopFiveCard({ item, rank, isActive, onOpen, onSelect }: { item: CatalogItem; rank: number; isActive: boolean; onOpen: () => void; onSelect: () => void }) {
@@ -264,7 +264,7 @@ export default function Home() {
         event.preventDefault();
         if (nextCard) {
           nextCard.focus({ preventScroll: true });
-          nextCard.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+          nextCard.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
         }
         return;
       }
@@ -296,7 +296,7 @@ export default function Home() {
       event.preventDefault();
       if (next) {
         next.focus({ preventScroll: true });
-        next.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+        next.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
       }
     };
     const focusFirst = () => document.querySelector<HTMLElement>(focusableSelector)?.focus({ preventScroll: true });
@@ -392,9 +392,12 @@ export default function Home() {
     if (!hasPublicGrid && !hasPremiumGrid) return;
     const focusTimer = window.setTimeout(() => {
       const selector = hasPremiumGrid ? ".premium-section .channels-grid .channel-card" : ".channels-section:not(.premium-section) .channels-grid .channel-card";
+      const active = document.activeElement as HTMLElement | null;
+      // Nunca rouba o foco de um card que o usuário já está percorrendo.
+      if (active?.closest(".channels-grid .channel-card")) return;
       const firstChannel = document.querySelector<HTMLElement>(selector);
       firstChannel?.focus({ preventScroll: true });
-      firstChannel?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      firstChannel?.scrollIntoView({ behavior: "auto", block: "center", inline: "nearest" });
     }, 100);
     return () => window.clearTimeout(focusTimer);
   }, [tvMode, channelsOpen, channelsLoading, channelsError, visibleChannels.length, premiumOpen, premiumLoading, premiumError, premiumVisible.length]);
