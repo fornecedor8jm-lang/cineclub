@@ -314,15 +314,6 @@ export default function Home() {
       .finally(() => setChannelsLoading(false));
   }, [channelsOpen, channels.length, channelsLoading]);
   useEffect(() => {
-    if (!premiumOpen || premiumItems.length || premiumLoading) return;
-    setPremiumLoading(true);
-    setPremiumError("");
-    loadPremiumM3u()
-      .then(setPremiumItems)
-      .catch((error) => setPremiumError(error instanceof Error ? error.message : "Não foi possível carregar a Nuvem Premium."))
-      .finally(() => setPremiumLoading(false));
-  }, [premiumOpen, premiumItems.length, premiumLoading]);
-  useEffect(() => {
     const sharedId = new URLSearchParams(window.location.search).get("titulo");
     if (!sharedId) return;
     const sharedItem = getCatalogItem(sharedId);
@@ -401,7 +392,7 @@ export default function Home() {
             <button type="button" onClick={() => scrollTo("terror")}>Terror</button>
             <button type="button" onClick={() => scrollTo("films")}>Filmes</button>
             <button type="button" className={channelsOpen ? "active" : ""} onClick={() => { setChannelsOpen(true); setTimeout(() => scrollTo("channels"), 0); }}>Canais</button>
-            <button type="button" className={premiumOpen ? "active" : ""} onClick={() => { setPremiumOpen(true); setTimeout(() => scrollTo("premium"), 0); }}>Nuvem Premium</button>
+            <button type="button" onClick={() => scrollTo("premium")}>Nuvem Premium</button>
             <button type="button" onClick={() => scrollTo("archive")}>Acervo</button>
             <button type="button" onClick={() => scrollTo("my-list")}>Minha lista <span>{favorites.length || ""}</span></button>
             <button type="button" onClick={() => scrollTo("about")}>Sobre</button>
@@ -436,21 +427,14 @@ export default function Home() {
           <div className="hero-bottom-line shell"><span>STREAMING CINECLUB</span><span>Escolha seu próximo título</span><ArrowUpRight size={15} /></div>
         </section>
 
-        <section className={`channels-section shell premium-section ${premiumOpen ? "is-open" : ""}`} data-row="premium" aria-labelledby="premium-title">
+        <section className="channels-section shell premium-section premium-maintenance" data-row="premium" aria-labelledby="premium-title">
           <div className="channels-heading">
-            <div><p className="section-kicker"><span />Conteúdo patrocinado</p><h2 id="premium-title">Nuvem Premium</h2><p>Canais, filmes e séries em uma fonte Premium separada do catálogo público.</p></div>
-            <button type="button" className="button button-secondary" onClick={() => setPremiumOpen((open) => !open)}>{premiumOpen ? "Ocultar Premium" : "Abrir Nuvem Premium"}</button>
+            <div><p className="section-kicker"><span />Conteúdo patrocinado</p><h2 id="premium-title">Nuvem Premium</h2><p>Esta área está em manutenção e será aberta em atualizações futuras.</p></div>
           </div>
-          {premiumOpen && <>
-            <div className="channels-country-tabs premium-category-tabs" role="tablist" aria-label="Escolha o tipo de conteúdo Premium">
-              {([{ id: "live", label: "Canais" }, { id: "movie", label: "Filmes" }, { id: "series", label: "Séries" }] as const).map((category) => <button key={category.id} type="button" role="tab" aria-selected={premiumCategory === category.id} className={premiumCategory === category.id ? "active" : ""} onClick={() => { setPremiumCategory(category.id); setPremiumQuery(""); }}>{category.label}</button>)}
-            </div>
-            <div className="channels-toolbar"><label className="channel-search"><Radio size={16} /><input value={premiumQuery} onChange={(event) => setPremiumQuery(event.target.value)} placeholder={`Buscar em ${premiumCategory === "live" ? "Canais" : premiumCategory === "movie" ? "Filmes" : "Séries"}`} aria-label="Buscar na Nuvem Premium" /></label><span>{premiumLoading ? "carregando..." : `${premiumVisible.length} itens`}</span></div>
-            {premiumLoading && <div className="channels-empty"><Loader2 size={22} className="spin" /><span>Carregando a Nuvem Premium...</span></div>}
-            {premiumError && <div className="channels-empty is-error"><Radio size={22} /><span>{premiumError.includes("não configurada") || premiumError.includes("não configurado") || premiumError.includes("não disponível") ? "A Nuvem Premium ainda não foi configurada neste ambiente." : premiumError}</span><button type="button" className="button button-primary" onClick={() => { setPremiumItems([]); setPremiumOpen(false); setTimeout(() => setPremiumOpen(true), 0); }}>Tentar novamente</button></div>}
-            {!premiumLoading && !premiumError && premiumVisible.length === 0 && <div className="channels-empty"><Search size={22} /><span>Nenhum item encontrado nesta categoria.</span></div>}
-            {!premiumLoading && !premiumError && premiumVisible.length > 0 && <div className="channels-grid">{premiumVisible.slice(0, 120).map((item) => <button type="button" className="channel-card" key={item.id} onClick={() => setSelectedChannel(item)}><span className="channel-logo">{item.logo ? <img src={item.logo} alt="" loading="lazy" /> : <Radio size={22} />}</span><span className="channel-card-copy"><strong>{item.name}</strong><small>{item.group}</small></span><span className="channel-live-dot" /></button>)}</div>}
-          </>}
+          <div className="premium-maintenance-card" role="status" aria-live="polite">
+            <span className="premium-maintenance-mark" aria-hidden="true">N</span>
+            <div><strong>Nuvem Premium em manutenção</strong><p>Estamos preparando os canais, filmes e séries para uma experiência mais estável na TV.</p><small>Disponível em uma atualização futura do Cineclub.</small></div>
+          </div>
         </section>
 
         <section className={`channels-section shell ${channelsOpen ? "is-open" : ""}`} data-row="channels" aria-labelledby="channels-title">
