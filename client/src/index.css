@@ -856,3 +856,81 @@ a { color: inherit; text-decoration: none; }
     font-size: 10px;
   }
 }
+
+
+/* Cabeçalho TV para WebViews com viewport intermediária: evita compressão e sobreposição. */
+@media (min-width: 761px) and (max-width: 1600px) {
+  .tv-layout .site-header {
+    min-height: 142px;
+  }
+  .tv-layout .header-inner {
+    min-height: 142px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: 78px 52px;
+    align-content: center;
+    gap: 0 26px;
+    padding-block: 6px;
+  }
+  .tv-layout .brand {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    gap: 12px;
+  }
+  .tv-layout .brand img {
+    width: 46px;
+    height: 46px;
+  }
+  .tv-layout .brand span {
+    font-size: 28px;
+  }
+  .tv-layout .header-tools {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+    gap: 14px;
+  }
+  .tv-layout .search-field {
+    width: 240px;
+    padding: 11px 13px;
+  }
+  .tv-layout .search-field input {
+    font-size: 13px;
+  }
+  .tv-layout .profile-mark {
+    width: 42px;
+    height: 42px;
+  }
+  .tv-layout .main-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(12px, 1.35vw, 24px);
+    width: 100%;
+    min-width: 0;
+    padding: 0 10px;
+    overflow: visible;
+  }
+  .tv-layout .main-nav button {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 12px 0;
+    font-size: clamp(14px, 1vw, 18px);
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .tv-layout .main-nav button span {
+    min-width: 19px;
+    height: 19px;
+    font-size: 10px;
+  }
+  .tv-layout .hero-content {
+    padding-top: 160px;
+  }
+  .tv-layout .poster-row {
+    padding-inline: max(36px, calc((100% - 1440px) / 2 + 36px));
+  }
+}
