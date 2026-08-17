@@ -213,11 +213,79 @@ export default function Home() {
   const [channelsError, setChannelsError] = useState("");
   const [channelQuery, setChannelQuery] = useState("");
   const [selectedChannel, setSelectedChannel] = useState<M3uChannel | null>(null);
+  const [tvMode, setTvMode] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("cineclub-list") ?? "[]") as string[]; } catch { return []; }
   });
 
-  useEffect(() => { localStorage.setItem("cineclub-list", JSON.stringify(favorites)); }, [favorites]);
+  useEffect(() => {
+    const queryMode = new URLSearchParams(window.location.search).get("tv") === "1";
+    const mediaQuery = window.matchMedia("(min-width: 1200px) and (hover: none), (min-width: 1600px) and (pointer: coarse)");
+    const updateTvMode = () => setTvMode(queryMode || mediaQuery.matches);
+    updateTvMode();
+    mediaQuery.addEventListener("change", updateTvMode);
+    return () => mediaQuery.removeEventListener("change", updateTvMode);
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("cineclub-list", JSON.stringify(favorites));
+  }, [favorites]);
+  useEffect(() => {
+    if (!tvMode) return;
+    const focusableSelector = "button:not([disabled]), a[href], input:not([disabled])";
+    const moveFocus = (event: KeyboardEvent) => {
+      if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      const active = document.activeElement as HTMLElement | null;
+      if (active?.tagName === "INPUT" && ["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      const activeChannelCard = active?.closest<HTMLElement>(".channels-grid .channel-card");
+      if (activeChannelCard) {
+        const grid = activeChannelCard.closest<HTMLElement>(".channels-grid");
+        const channelCards = grid ? Array.from(grid.querySelectorAll<HTMLElement>(".channel-card")) : [];
+        const currentIndex = channelCards.indexOf(activeChannelCard);
+        const columns = grid ? Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length) : 1;
+        const offset = event.key === "ArrowLeft" ? -1 : event.key === "ArrowRight" ? 1 : event.key === "ArrowUp" ? -columns : columns;
+        const nextCard = channelCards[currentIndex + offset];
+        if (nextCard) {
+          event.preventDefault();
+          nextCard.focus({ preventScroll: true });
+          nextCard.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+        }
+        return;
+      }
+      const candidates = Array.from(document.querySelectorAll<HTMLElement>(focusableSelector)).filter((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && getComputedStyle(element).visibility !== "hidden";
+      });
+      if (!candidates.length) return;
+      const current = active && candidates.includes(active) ? active : candidates[0];
+      if (!active || !candidates.includes(active)) current.focus();
+      const source = current.getBoundingClientRect();
+      const sourceX = source.left + source.width / 2;
+      const sourceY = source.top + source.height / 2;
+      const direction = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] }[event.key] ?? [0, 0];
+      const ranked = candidates
+        .filter((candidate) => candidate !== current)
+        .map((candidate) => {
+          const rect = candidate.getBoundingClientRect();
+          const x = rect.left + rect.width / 2 - sourceX;
+          const y = rect.top + rect.height / 2 - sourceY;
+          const primary = x * direction[0] + y * direction[1];
+          const distance = Math.hypot(x, y);
+          return { candidate, primary, distance };
+        })
+        .filter(({ primary }) => primary > 0)
+        .sort((a, b) => (a.primary - b.primary) || (a.distance - b.distance));
+      const next = ranked[0]?.candidate;
+      if (next) {
+        event.preventDefault();
+        next.focus({ preventScroll: true });
+        next.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+      }
+    };
+    const focusFirst = () => document.querySelector<HTMLElement>(focusableSelector)?.focus({ preventScroll: true });
+    document.addEventListener("keydown", moveFocus);
+    window.setTimeout(focusFirst, 250);
+    return () => document.removeEventListener("keydown", moveFocus);
+  }, [tvMode]);
   useEffect(() => {
     if (!channelsOpen || channels.length || channelsLoading) return;
     setChannelsLoading(true);
@@ -264,7 +332,7 @@ export default function Home() {
   }, [channels, channelQuery]);
 
   return (
-    <div className="cineclub-app">
+    <div className={`cineclub-app ${tvMode ? "tv-layout" : ""}`} data-tv-mode={tvMode ? "true" : "false"}>
       <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
         <div className="header-inner shell">
           <button className="brand" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Voltar ao início do Cineclub">
@@ -375,7 +443,7 @@ export default function Home() {
 
       <footer className="site-footer shell"><div className="footer-brand"><img src={markUrl} alt="" /><span>cine<em>club</em></span></div><p>Uma curadoria independente para histórias que deixam marcas.</p><span className="footer-stamp">STREAMING 2026</span></footer>
       {selectedItem && <DetailsModal item={selectedItem} isFavorite={favorites.includes(selectedItem.id)} onClose={() => setSelectedItem(null)} onToggleFavorite={() => toggleFavorite(selectedItem)} />}
-      {selectedChannel && <ChannelPlayer channel={selectedChannel} onClose={() => setSelectedChannel(null)} />}
+      {selectedChannel && <ChannelPlayer channel={selectedChannel} channels={visibleChannels.slice(0, 120)} onSelectChannel={setSelectedChannel} onClose={() => setSelectedChannel(null)} />}
     </div>
   );
 }

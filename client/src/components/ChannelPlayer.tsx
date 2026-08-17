@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
-import { Loader2, Pause, Play, Radio, RotateCw, Volume2, VolumeX, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Pause, Play, Radio, RotateCw, Volume2, VolumeX, X } from "lucide-react";
 import type { M3uChannel } from "@/lib/m3u";
 
 type ChannelPlayerProps = {
   channel: M3uChannel;
+  channels?: M3uChannel[];
+  onSelectChannel?: (channel: M3uChannel) => void;
   onClose: () => void;
 };
 
-export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) {
+export default function ChannelPlayer({ channel, channels = [], onSelectChannel, onClose }: ChannelPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -19,6 +21,7 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
   const [showDonation, setShowDonation] = useState(false);
   const [showChannelInfo, setShowChannelInfo] = useState(true);
   const [retryKey, setRetryKey] = useState(0);
+  const channelInfoTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -30,9 +33,10 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
   }, []);
 
   useEffect(() => {
+    window.clearTimeout(channelInfoTimerRef.current);
     setShowChannelInfo(true);
-    const hideTimer = window.setTimeout(() => setShowChannelInfo(false), 5000);
-    return () => window.clearTimeout(hideTimer);
+    channelInfoTimerRef.current = window.setTimeout(() => setShowChannelInfo(false), 5000);
+    return () => window.clearTimeout(channelInfoTimerRef.current);
   }, [channel.id]);
 
   useEffect(() => {
@@ -157,6 +161,13 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
     setIsLandscape(nextLandscape);
   };
 
+  const channelIndex = channels.findIndex((item) => item.id === channel.id);
+  const previousChannel = channelIndex > 0 ? channels[channelIndex - 1] : undefined;
+  const nextChannel = channelIndex >= 0 && channelIndex < channels.length - 1 ? channels[channelIndex + 1] : undefined;
+  const selectChannel = (nextChannel: M3uChannel | undefined) => {
+    if (nextChannel && onSelectChannel) onSelectChannel(nextChannel);
+  };
+
   const togglePlayback = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -188,12 +199,14 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
           </div>
         )}
         <div className="channel-player-controls">
-          <div className={`player-channel-info${showChannelInfo ? "" : " is-hidden"}`} onClick={() => setShowChannelInfo(false)}>
+          <div className={`player-channel-info${showChannelInfo ? "" : " is-hidden"}`} aria-hidden={!showChannelInfo} data-channel-info={showChannelInfo ? "visible" : "hidden"} style={{ display: showChannelInfo ? "flex" : "none" }} onClick={() => setShowChannelInfo(false)}>
 
             {channel.logo ? <img className="player-channel-logo" src={channel.logo} alt="" /> : <span className="player-channel-fallback"><Radio size={18} /></span>}
             <div><span className="live-badge">AO VIVO</span><h2>{channel.name}</h2><p>{channel.group}</p></div>
           </div>
           <div className="player-actions">
+            <button type="button" className="player-channel-prev" onClick={() => selectChannel(previousChannel)} disabled={!previousChannel} aria-label="Canal anterior" title="Canal anterior"><ChevronUp size={19} /></button>
+            <button type="button" className="player-channel-next" onClick={() => selectChannel(nextChannel)} disabled={!nextChannel} aria-label="Próximo canal" title="Próximo canal"><ChevronDown size={19} /></button>
             <button type="button" onClick={togglePlayback} aria-label={isPlaying ? "Pausar" : "Reproduzir"}>{isPlaying ? <Pause size={19} /> : <Play size={19} fill="currentColor" />}</button>
             <button type="button" onClick={() => setIsMuted((muted) => !muted)} aria-label={isMuted ? "Ativar som" : "Silenciar"}>{isMuted ? <VolumeX size={19} /> : <Volume2 size={19} />}</button>
           </div>
