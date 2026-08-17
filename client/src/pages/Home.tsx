@@ -344,8 +344,8 @@ export default function Home() {
       <div className="mobile-unavailable" role="status">
         <div className="mobile-unavailable-inner">
           <span className="player-brand"><span className="brand-dot" /> cine<em>club</em></span>
-          <h1>Experiência de tela grande</h1>
-          <p>O Cineclub está disponível para computadores e Android TV. Abra o site em uma tela maior para assistir.</p>
+          <h1>Ative o Site para computador</h1>
+          <p>Para assistir pelo celular, abra o menu do navegador e ative “Site para computador”. O Cineclub será carregado no layout desktop, com o player em tela cheia.</p>
         </div>
       </div>
       <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
