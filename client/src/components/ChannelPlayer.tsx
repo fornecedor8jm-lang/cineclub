@@ -17,6 +17,8 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [showDonation, setShowDonation] = useState(false);
+  const [showChannelInfo, setShowChannelInfo] = useState(true);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -28,6 +30,12 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
   }, []);
 
   useEffect(() => {
+    setShowChannelInfo(true);
+    const hideTimer = window.setTimeout(() => setShowChannelInfo(false), 5000);
+    return () => window.clearTimeout(hideTimer);
+  }, [channel.id]);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     setIsLoading(true);
@@ -35,7 +43,15 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
     let hls: Hls | null = null;
 
     const startPlayback = () => {
-      video.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+      video.play()
+        .then(() => { setIsLoading(false); setIsPlaying(true); })
+        .catch(() => {
+          video.muted = true;
+          setIsMuted(true);
+          video.play()
+            .then(() => { setIsLoading(false); setIsPlaying(true); })
+            .catch(() => setIsPlaying(false));
+        });
     };
 
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
@@ -47,7 +63,14 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, startPlayback);
       hls.on(Hls.Events.ERROR, (_event, data) => {
-        if (data.fatal) setError("Este canal não conseguiu iniciar agora. Tente outro canal.");
+        if (!data.fatal) return;
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          hls?.startLoad();
+        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          hls?.recoverMediaError();
+        } else {
+          setError("Este canal não conseguiu iniciar agora. Tente outro canal.");
+        }
       });
     } else {
       setError("Este navegador não oferece suporte a reprodução HLS.");
@@ -69,7 +92,7 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("error", onError);
     };
-  }, [channel.url]);
+  }, [channel.url, retryKey]);
 
   const toggleOrientation = async () => {
     const nextLandscape = !isLandscape;
@@ -102,7 +125,8 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
 
   return (
     <div className="channel-player-layer" role="dialog" aria-modal="true" aria-label={`Reprodutor de ${channel.name}`}>
-      <div ref={playerRef} className={`channel-player${isLandscape ? " is-landscape" : ""}`}>
+        <div ref={playerRef} className={`channel-player${isLandscape ? " is-landscape" : ""}`}>
+
         <video ref={videoRef} playsInline autoPlay muted={isMuted} className="channel-video" />
         <div className="channel-player-scrim" />
         <div className="channel-player-topline">
@@ -114,7 +138,7 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
         </div>
         <div className="channel-player-content">
           {isLoading && !error && <div className="player-loading"><Loader2 size={28} className="spin" /><span>Conectando ao canal...</span></div>}
-          {error && <div className="player-error"><Radio size={27} /><strong>Transmissão indisponível</strong><span>{error}</span><button type="button" className="button button-primary" onClick={() => window.location.reload()}>Tentar novamente</button></div>}
+          {error && <div className="player-error"><Radio size={27} /><strong>Transmissão indisponível</strong><span>{error}</span><div className="player-error-actions"><button type="button" className="button button-primary" onClick={() => { setError(""); setIsLoading(true); setRetryKey((value) => value + 1); }}>Tentar novamente</button><button type="button" className="button button-ghost" onClick={onClose}>Escolher outro canal</button></div></div>}
         </div>
         {showDonation && (
           <div className="player-donation" role="status" aria-live="polite">
@@ -123,7 +147,8 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
           </div>
         )}
         <div className="channel-player-controls">
-          <div className="player-channel-info">
+          <div className={`player-channel-info${showChannelInfo ? "" : " is-hidden"}`} onClick={() => setShowChannelInfo(false)}>
+
             {channel.logo ? <img className="player-channel-logo" src={channel.logo} alt="" /> : <span className="player-channel-fallback"><Radio size={18} /></span>}
             <div><span className="live-badge">AO VIVO</span><h2>{channel.name}</h2><p>{channel.group}</p></div>
           </div>
