@@ -41,6 +41,9 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
     setIsLoading(true);
     setError("");
     let hls: Hls | null = null;
+    let retryTimer: number | undefined;
+    let stallTimer: number | undefined;
+    let fatalRetries = 0;
 
     const startPlayback = () => {
       video.play()
@@ -58,32 +61,70 @@ export default function ChannelPlayer({ channel, onClose }: ChannelPlayerProps) 
       video.src = channel.url;
       video.addEventListener("loadedmetadata", startPlayback, { once: true });
     } else if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true, lowLatencyMode: true, backBufferLength: 30 });
+      hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: false,
+        backBufferLength: 15,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+        liveSyncDurationCount: 3,
+        liveMaxLatencyDurationCount: 6,
+        manifestLoadingMaxRetry: 4,
+        levelLoadingMaxRetry: 5,
+        fragLoadingMaxRetry: 6,
+        manifestLoadingRetryDelay: 1000,
+        levelLoadingRetryDelay: 1000,
+        fragLoadingRetryDelay: 1000,
+      });
       hls.loadSource(channel.url);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, startPlayback);
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (!data.fatal) return;
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-          hls?.startLoad();
-        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+        fatalRetries += 1;
+        if (fatalRetries <= 3 && data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          window.clearTimeout(retryTimer);
+          retryTimer = window.setTimeout(() => hls?.startLoad(-1), 1000 * fatalRetries);
+        } else if (fatalRetries <= 2 && data.type === Hls.ErrorTypes.MEDIA_ERROR) {
           hls?.recoverMediaError();
         } else {
-          setError("Este canal não conseguiu iniciar agora. Tente outro canal.");
+          setIsLoading(false);
+          setError("A transmissão ficou indisponível. Tente novamente sem sair do player.");
         }
       });
     } else {
       setError("Este navegador não oferece suporte a reprodução HLS.");
     }
 
-    const onWaiting = () => setIsLoading(true);
-    const onPlaying = () => { setIsLoading(false); setIsPlaying(true); };
-    const onError = () => setError("Não foi possível reproduzir este canal.");
+    const onWaiting = () => {
+      setIsLoading(true);
+      window.clearTimeout(stallTimer);
+      stallTimer = window.setTimeout(() => {
+        if (video.paused || video.readyState < 3) {
+          setIsLoading(false);
+          setError("A transmissão está demorando para responder. Tente novamente.");
+        }
+      }, 15000);
+    };
+    const onPlaying = () => {
+      window.clearTimeout(stallTimer);
+      setIsLoading(false);
+      setError("");
+      setIsPlaying(true);
+      fatalRetries = 0;
+    };
+    const onError = () => {
+      window.clearTimeout(stallTimer);
+      setIsLoading(false);
+      setError("Não foi possível reproduzir este canal.");
+    };
     video.addEventListener("waiting", onWaiting);
     video.addEventListener("playing", onPlaying);
     video.addEventListener("error", onError);
 
     return () => {
+      window.clearTimeout(retryTimer);
+      window.clearTimeout(stallTimer);
       hls?.destroy();
       video.pause();
       video.removeAttribute("src");
