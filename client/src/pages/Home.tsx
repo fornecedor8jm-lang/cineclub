@@ -329,8 +329,16 @@ export default function Home() {
   const visibleChannels = useMemo(() => {
     const query = channelQuery.trim().toLocaleLowerCase("pt-BR");
     return channels.filter((channel) => !query || `${channel.name} ${channel.group}`.toLocaleLowerCase("pt-BR").includes(query));
-  }, [channels, channelQuery]);
-
+    }, [channels, channelQuery]);
+  useEffect(() => {
+    if (!tvMode || !channelsOpen || channelsLoading || channelsError || !visibleChannels.length) return;
+    const focusTimer = window.setTimeout(() => {
+      const firstChannel = document.querySelector<HTMLElement>(".channels-grid .channel-card");
+      firstChannel?.focus({ preventScroll: true });
+      firstChannel?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+    }, 100);
+    return () => window.clearTimeout(focusTimer);
+  }, [tvMode, channelsOpen, channelsLoading, channelsError, visibleChannels.length]);
   return (
     <div className={`cineclub-app ${tvMode ? "tv-layout" : ""}`} data-tv-mode={tvMode ? "true" : "false"}>
       <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
