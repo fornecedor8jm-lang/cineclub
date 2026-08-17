@@ -33,6 +33,11 @@ function ratingStars(rating?: number) {
   return `${"★".repeat(filled)}${"☆".repeat(5 - filled)}`;
 }
 
+function isTvConfirmKey(event: KeyboardEvent) {
+  return ["Enter", "NumpadEnter", " ", "Space", "Select", "OK", "DPAD_CENTER"].includes(event.key)
+    || [13, 23, 66].includes(event.keyCode);
+}
+
 function TopFiveCard({ item, rank, isActive, onOpen, onSelect }: { item: CatalogItem; rank: number; isActive: boolean; onOpen: () => void; onSelect: () => void }) {
   return (
     <article className={`top-five-card ${isActive ? "is-active" : ""}`}>
@@ -240,8 +245,13 @@ export default function Home() {
     if (!tvMode) return;
     const focusableSelector = "button:not([disabled]), a[href], input:not([disabled])";
     const moveFocus = (event: KeyboardEvent) => {
-      if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
       const active = document.activeElement as HTMLElement | null;
+      if (isTvConfirmKey(event) && active && ["BUTTON", "A", "INPUT"].includes(active.tagName)) {
+        event.preventDefault();
+        active.click();
+        return;
+      }
+      if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
       if (active?.tagName === "INPUT" && ["ArrowLeft", "ArrowRight"].includes(event.key)) return;
       const activeChannelCard = active?.closest<HTMLElement>(".channels-grid .channel-card");
       if (activeChannelCard) {
