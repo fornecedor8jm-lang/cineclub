@@ -22,7 +22,7 @@ import {
   X,
   Youtube,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { catalog, collections, type AccessLink, type CatalogItem, getCatalogItem } from "@/lib/catalog";
 import { loadM3u, loadPremiumM3u, M3U_SOURCES, type M3uChannel, type M3uContentType } from "@/lib/m3u";
 import ChannelPlayer from "@/components/ChannelPlayer";
@@ -361,10 +361,19 @@ export default function Home() {
     const query = channelQuery.trim().toLocaleLowerCase("pt-BR");
     return countryChannels.filter((channel) => !query || `${channel.name} ${channel.group}`.toLocaleLowerCase("pt-BR").includes(query));
   }, [countryChannels, channelQuery]);
+  const deferredPremiumQuery = useDeferredValue(premiumQuery);
+  const premiumBuckets = useMemo(() => {
+    const buckets: Record<M3uContentType, M3uChannel[]> = { live: [], movie: [], series: [] };
+    for (const item of premiumItems) buckets[item.contentType].push(item);
+    return buckets;
+  }, [premiumItems]);
   const premiumVisible = useMemo(() => {
-    const query = premiumQuery.trim().toLocaleLowerCase("pt-BR");
-    return premiumItems.filter((item) => (item.contentType ?? "other") === premiumCategory && (!query || `${item.name} ${item.group}`.toLocaleLowerCase("pt-BR").includes(query)));
-  }, [premiumCategory, premiumItems, premiumQuery]);
+    const query = deferredPremiumQuery.trim().toLocaleLowerCase("pt-BR");
+    const categoryItems = premiumBuckets[premiumCategory];
+    return query
+      ? categoryItems.filter((item) => `${item.name} ${item.group}`.toLocaleLowerCase("pt-BR").includes(query))
+      : categoryItems;
+  }, [deferredPremiumQuery, premiumBuckets, premiumCategory]);
   useEffect(() => {
     if (!tvMode) return;
     const hasPublicGrid = channelsOpen && !channelsLoading && !channelsError && visibleChannels.length > 0;
@@ -438,8 +447,9 @@ export default function Home() {
             </div>
             <div className="channels-toolbar"><label className="channel-search"><Radio size={16} /><input value={premiumQuery} onChange={(event) => setPremiumQuery(event.target.value)} placeholder={`Buscar em ${premiumCategory === "live" ? "Canais" : premiumCategory === "movie" ? "Filmes" : "Séries"}`} aria-label="Buscar na Nuvem Premium" /></label><span>{premiumLoading ? "carregando..." : `${premiumVisible.length} itens`}</span></div>
             {premiumLoading && <div className="channels-empty"><Loader2 size={22} className="spin" /><span>Carregando a Nuvem Premium...</span></div>}
-            {premiumError && <div className="channels-empty is-error"><Radio size={22} /><span>{premiumError}</span><button type="button" className="button button-primary" onClick={() => { setPremiumItems([]); setPremiumOpen(false); setTimeout(() => setPremiumOpen(true), 0); }}>Tentar novamente</button></div>}
-            {!premiumLoading && !premiumError && <div className="channels-grid">{premiumVisible.slice(0, 120).map((item) => <button type="button" className="channel-card" key={item.id} onClick={() => setSelectedChannel(item)}><span className="channel-logo">{item.logo ? <img src={item.logo} alt="" loading="lazy" /> : <Radio size={22} />}</span><span className="channel-card-copy"><strong>{item.name}</strong><small>{item.group}</small></span><span className="channel-live-dot" /></button>)}</div>}
+            {premiumError && <div className="channels-empty is-error"><Radio size={22} /><span>{premiumError.includes("não configurada") || premiumError.includes("não configurado") || premiumError.includes("não disponível") ? "A Nuvem Premium ainda não foi configurada neste ambiente." : premiumError}</span><button type="button" className="button button-primary" onClick={() => { setPremiumItems([]); setPremiumOpen(false); setTimeout(() => setPremiumOpen(true), 0); }}>Tentar novamente</button></div>}
+            {!premiumLoading && !premiumError && premiumVisible.length === 0 && <div className="channels-empty"><Search size={22} /><span>Nenhum item encontrado nesta categoria.</span></div>}
+            {!premiumLoading && !premiumError && premiumVisible.length > 0 && <div className="channels-grid">{premiumVisible.slice(0, 120).map((item) => <button type="button" className="channel-card" key={item.id} onClick={() => setSelectedChannel(item)}><span className="channel-logo">{item.logo ? <img src={item.logo} alt="" loading="lazy" /> : <Radio size={22} />}</span><span className="channel-card-copy"><strong>{item.name}</strong><small>{item.group}</small></span><span className="channel-live-dot" /></button>)}</div>}
           </>}
         </section>
 

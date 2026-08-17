@@ -1,8 +1,20 @@
 const premiumUrl = () => process.env.PREMIUM_M3U_URL?.trim();
 
+function getValidatedPremiumUrl() {
+  const rawUrl = premiumUrl();
+  if (!rawUrl) throw new Error("PREMIUM_M3U_URL não configurada");
+
+  try {
+    const parsed = new URL(rawUrl);
+    if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("protocolo não suportado");
+    return parsed.toString();
+  } catch {
+    throw new Error("PREMIUM_M3U_URL inválida");
+  }
+}
+
 export async function fetchPremiumPlaylist() {
-  const url = premiumUrl();
-  if (!url) throw new Error("PREMIUM_M3U_URL não configurada");
+  const url = getValidatedPremiumUrl();
 
   const response = await fetch(url, {
     headers: { Accept: "audio/x-mpegurl,text/plain,*/*" },
@@ -13,5 +25,10 @@ export async function fetchPremiumPlaylist() {
 }
 
 export function hasPremiumSource() {
-  return Boolean(premiumUrl());
+  try {
+    getValidatedPremiumUrl();
+    return true;
+  } catch {
+    return false;
+  }
 }

@@ -1,4 +1,4 @@
-export const DEFAULT_M3U_URL = "https://iptv-org.github.io/iptv/countries/br.m3u";
+export const DEFAULT_M3U_URL = "https://iptv-org.github.io/iptv/languages/por.m3u";
 
 export const M3U_SOURCES = [
   { id: "ao", label: "Angola", url: "https://iptv-org.github.io/iptv/countries/ao.m3u" },
@@ -7,7 +7,7 @@ export const M3U_SOURCES = [
   { id: "br", label: "Brasil", url: "https://iptv-org.github.io/iptv/countries/br.m3u" },
 ] as const;
 
-export type M3uContentType = "live" | "movie" | "series" | "other";
+export type M3uContentType = "live" | "movie" | "series";
 
 export type M3uChannel = {
   id: string;
@@ -17,40 +17,61 @@ export type M3uChannel = {
   country?: string;
   sourceCountry?: string;
   language?: string;
-  contentType?: M3uContentType;
+  contentType: M3uContentType;
   url: string;
 };
 
+function normalize(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
+}
+
+/** Classifica por evidências específicas de VOD e assume live para o restante. */
+export function classifyM3uEntry(group: string, name = "", url = ""): M3uContentType {
+  const groupText = normalize(group);
+  const nameText = normalize(name);
+  const urlText = normalize(url);
+  const fullText = `${groupText} ${nameText}`;
+
+  const isSeries =
+    /(^|\b)(series?|tv shows?|temporadas?|episodios?)(\b|$)/.test(groupText) ||
+    /\b(?:s|t)\d{1,2}\s*e\s*\d{1,3}\b/.test(fullText) ||
+    /\b(?:temporada|season|episodio|episode)\s*\d+/.test(fullText) ||
+    /\/(?:series|serie|episodes?)\//.test(urlText);
+  if (isSeries) return "series";
+
+  const isMovie =
+    /(^|\b)(filmes?|movies?|cinema|longas?)(\b|$)/.test(groupText) ||
+    /\/(?:movie|movies|filmes?)\//.test(urlText);
+  if (isMovie) return "movie";
+
+  // Itens sem metadado confiável continuam visíveis na aba Canais.
+  return "live";
+}
+
 export function classifyM3uGroup(group: string): M3uContentType {
-  const normalized = group.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
-  // Alguns provedores usam grupos híbridos como “Canais | Filmes e Series”.
-  // Quando o grupo começa com Canais, ele representa transmissão ao vivo.
-  if (/^(canais?|radio|live)\b/.test(normalized)) return "live";
-  if (/^(series?|tv shows?)\b/.test(normalized) || /temporada|episodio/.test(normalized)) return "series";
-  if (/^(filmes?|movies?|cinema)\b/.test(normalized)) return "movie";
-  if (/canais?|radio|live|esporte|noticia|aberto|infantil|variedade/.test(normalized)) return "live";
-  if (/serie|series|temporada|episodio|tv show/.test(normalized)) return "series";
-  if (/filme|filmes|movie|cinema/.test(normalized)) return "movie";
-  return "other";
+  return classifyM3uEntry(group);
 }
 
 function readAttribute(line: string, names: string[]) {
   for (const name of names) {
-    const match = line.match(new RegExp(`(?:^|[\\s,])${name}\\s*=\\s*["']([^"']*)["']`, "i"));
-    if (match?.[1]) return match[1].trim();
+    const quoted = line.match(new RegExp(`(?:^|[\\s,])${name}\\s*=\\s*["']([^"']*)["']`, "i"));
+    if (quoted?.[1]) return quoted[1].trim();
+
+    const unquoted = line.match(new RegExp(`(?:^|[\\s,])${name}\\s*=\\s*([^\\s,]+)`, "i"));
+    if (unquoted?.[1]) return unquoted[1].trim();
   }
   return "";
 }
 
 function cleanName(value: string) {
-  return value.replace(/^\\s*,\\s*/, "").replace(/\\s+/g, " ").trim();
+  return value.replace(/^\s*,\s*/, "").replace(/\s+/g, " ").trim();
 }
 
 function firstCommaOutsideQuotes(line: string) {
   let quote = "";
   for (let index = 0; index < line.length; index += 1) {
     const char = line[index];
-    if ((char === '"' || char === "'") && (!index || line[index - 1] !== "\\\\")) quote = quote === char ? "" : quote || char;
+    if ((char === '"' || char === "'") && line[index - 1] !== "\\") quote = quote === char ? "" : quote || char;
     if (char === "," && !quote) return index;
   }
   return -1;
@@ -68,30 +89,34 @@ export function parseM3u(text: string, sourceCountry?: string): M3uChannel[] {
     if (line.toUpperCase().startsWith("#EXTINF")) {
       const comma = firstCommaOutsideQuotes(line);
       const fallbackName = comma >= 0 ? cleanName(line.slice(comma + 1)) : "Canal Cineclub";
+      const group = readAttribute(line, ["group-title", "group", "category"]) || "Canais ao vivo";
+      const name = readAttribute(line, ["tvg-name", "name"]) || fallbackName;
       pending = {
-        name: readAttribute(line, ["tvg-name", "name"]) || fallbackName,
-        group: readAttribute(line, ["group-title", "group", "category"]) || "Canais ao vivo",
+        name,
+        group,
         logo: readAttribute(line, ["tvg-logo", "logo", "logo-url"]) || undefined,
         country: readAttribute(line, ["tvg-country", "country"]) || undefined,
         sourceCountry,
         language: readAttribute(line, ["tvg-language", "language"]) || undefined,
-        contentType: classifyM3uGroup(readAttribute(line, ["group-title", "group", "category"]) || "Canais ao vivo"),
+        contentType: classifyM3uEntry(group, name),
       };
       continue;
     }
 
     if (!line.startsWith("#") && pending) {
       const url = line;
-      const id = `${pending.name}-${url}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      channels.push({ ...pending, id, url });
+      const contentType = classifyM3uEntry(pending.group, pending.name, url);
+      const id = `${pending.name}-${url}`.toLocaleLowerCase("pt-BR").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      channels.push({ ...pending, contentType, id, url });
       pending = null;
     }
   }
 
   const seen = new Set<string>();
   return channels.filter((channel) => {
-    if (seen.has(channel.url)) return false;
-    seen.add(channel.url);
+    const key = channel.url.trim().toLocaleLowerCase("pt-BR");
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 }
@@ -100,7 +125,10 @@ export async function loadPremiumM3u() {
   const response = await fetch("/api/premium", { headers: { Accept: "audio/x-mpegurl,text/plain,*/*" } });
   if (!response.ok) {
     let message = `A fonte Premium respondeu HTTP ${response.status}`;
-    try { const payload = await response.json() as { error?: string }; if (payload.error) message = payload.error; } catch { /* resposta não JSON */ }
+    try {
+      const payload = await response.json() as { error?: string };
+      if (payload.error) message = payload.error;
+    } catch { /* resposta não JSON */ }
     throw new Error(message);
   }
   const channels = parseM3u(await response.text(), "Nuvem Premium");
@@ -111,8 +139,7 @@ export async function loadPremiumM3u() {
 export async function loadM3u(url = DEFAULT_M3U_URL, sourceCountry?: string) {
   const response = await fetch(url, { headers: { Accept: "audio/x-mpegurl,text/plain,*/*" } });
   if (!response.ok) throw new Error(`A lista respondeu HTTP ${response.status}`);
-  const text = await response.text();
-  const channels = parseM3u(text, sourceCountry);
+  const channels = parseM3u(await response.text(), sourceCountry);
   if (!channels.length) throw new Error("A lista foi baixada, mas nenhum canal foi encontrado.");
   return channels;
 }
