@@ -251,8 +251,8 @@ export default function Home() {
         const columns = grid ? Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length) : 1;
         const offset = event.key === "ArrowLeft" ? -1 : event.key === "ArrowRight" ? 1 : event.key === "ArrowUp" ? -columns : columns;
         const nextCard = channelCards[currentIndex + offset];
+        event.preventDefault();
         if (nextCard) {
-          event.preventDefault();
           nextCard.focus({ preventScroll: true });
           nextCard.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
         }
@@ -276,14 +276,15 @@ export default function Home() {
           const x = rect.left + rect.width / 2 - sourceX;
           const y = rect.top + rect.height / 2 - sourceY;
           const primary = x * direction[0] + y * direction[1];
+          const cross = Math.abs(x * direction[1] - y * direction[0]);
           const distance = Math.hypot(x, y);
-          return { candidate, primary, distance };
+          return { candidate, primary, cross, distance };
         })
-        .filter(({ primary }) => primary > 0)
-        .sort((a, b) => (a.primary - b.primary) || (a.distance - b.distance));
+        .filter(({ primary }) => primary >= 24)
+        .sort((a, b) => (a.cross - b.cross) || (a.primary - b.primary) || (a.distance - b.distance));
       const next = ranked[0]?.candidate;
+      event.preventDefault();
       if (next) {
-        event.preventDefault();
         next.focus({ preventScroll: true });
         next.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
       }
