@@ -23,6 +23,7 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
   const [retryKey, setRetryKey] = useState(0);
   const channelInfoTimerRef = useRef<number | undefined>(undefined);
   const controlsTimerRef = useRef<number | undefined>(undefined);
+  const fullscreenRequestedRef = useRef(false);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -156,7 +157,20 @@ export default function ChannelPlayer({ channel, channels = [], onSelectChannel,
     if (nextChannel && onSelectChannel) onSelectChannel(nextChannel);
   };
 
+  const requestNativeFullscreen = () => {
+    const player = playerRef.current;
+    if (!player || document.fullscreenElement === player || fullscreenRequestedRef.current) return;
+    fullscreenRequestedRef.current = true;
+    if (player.requestFullscreen) {
+      void player.requestFullscreen().catch(() => { fullscreenRequestedRef.current = false; });
+      return;
+    }
+    const video = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    video?.webkitEnterFullscreen?.();
+  };
+
   const revealPlayerUi = () => {
+    requestNativeFullscreen();
     setShowControls(true);
     setShowChannelInfo(true);
     window.clearTimeout(controlsTimerRef.current);

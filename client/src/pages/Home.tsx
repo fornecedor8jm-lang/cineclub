@@ -341,13 +341,7 @@ export default function Home() {
   }, [tvMode, channelsOpen, channelsLoading, channelsError, visibleChannels.length]);
   return (
     <div className={`cineclub-app ${tvMode ? "tv-layout" : ""}`} data-tv-mode={tvMode ? "true" : "false"}>
-      <div className="mobile-unavailable" role="status">
-        <div className="mobile-unavailable-inner">
-          <span className="player-brand"><span className="brand-dot" /> cine<em>club</em></span>
-          <h1>Ative o Site para computador</h1>
-          <p>Para assistir pelo celular, abra o menu do navegador e ative “Site para computador”. O Cineclub será carregado no layout desktop, com o player em tela cheia.</p>
-        </div>
-      </div>
+      <div className="mobile-watch-notice" role="status">Para assistir, use o site para computador do seu navegador.</div>
       <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
         <div className="header-inner shell">
           <button className="brand" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Voltar ao início do Cineclub">
